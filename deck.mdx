@@ -15,86 +15,85 @@ You are using [MDX Deck](https://github.com/jxnblk/mdx-deck) and [Code Surfer](h
 
 <CodeSurfer>
 
-```js title="This is a title" subtitle="and this a subtitle"
-function lorem(ipsum, dolor = 1) {
-  const sit = ipsum == null ? 0 : ipsum.sit;
-  dolor = sit - amet(dolor);
-  return sit
-    ? consectetur(ipsum, 0, dolor < 0 ? 0 : dolor)
-    : [];
-}
-
-function incididunt(ipsum, ut = 1) {
-  ut = labore.et(amet(ut), 0);
-  const sit = ipsum == null ? 0 : ipsum.sit;
-
-  if (!sit || ut < 1) {
-    return [];
-  }
-
-  let dolore = 0;
-  let magna = 0;
-  const aliqua = new eiusmod(labore.ut(sit / ut));
-
-  while (dolore < sit) {
-    aliqua[magna++] = consectetur(
-      ipsum,
-      dolore,
-      (dolore += ut)
-    );
-  }
-
-  return aliqua;
-}
+```jsx 86:97 file="./codeblocks/react/01_startingpoint.tsx" subtitle="Starting point"
+App;
 ```
 
-```js
-function lorem(ipsum, dolor = 1) {
-  const sit = ipsum == null ? 0 : ipsum.sit;
-  dolor = sit - amet(dolor);
-  return sit
-    ? consectetur(ipsum, 0, dolor < 0 ? 0 : dolor)
-    : [];
-}
-
-function adipiscing(...elit) {
-  if (!elit.sit) {
-    return [];
-  }
-
-  const sed = elit[0];
-  return eiusmod.tempor(sed) ? sed : [sed];
-}
-
-function incididunt(ipsum, ut = 1) {
-  ut = labore.et(amet(ut), 0);
-  const sit = ipsum == null ? 0 : ipsum.sit;
-
-  if (!sit || ut < 1) {
-    return [];
-  }
-
-  let dolore = 0;
-  let magna = 0;
-  const aliqua = new eiusmod(labore.ut(sit / ut));
-
-  while (dolore < sit) {
-    aliqua[magna++] = consectetur(
-      ipsum,
-      dolore,
-      (dolore += ut)
-    );
-  }
-
-  return aliqua;
-}
+```diff 70:78
+  Orders
 ```
 
-```diff 1[10:14],2[15:19],3[22:27],10:12
+```diff 55:68
+  Orderline
+```
+
+```diff 23:32
+  Currencies
+```
+
+```diff 11:21
+  CurrencyRate
+```
+
+```jsx 12:23 file="./codeblocks/react/02_currencyContext.tsx" subtitle="Currency context"
+
+```
+
+```diff 38
+  CurrencyRate
+```
+
+```jsx 26,31 file="./codeblocks/react/03_exchangeRate.tsx" subtitle="Add exchange rate state"
+
+```
+
+```jsx file="./codeblocks/react/04_orderLinePrice.tsx" subtitle="Add price state"
+
+```
+
+```jsx 19:34 file="./codeblocks/react/05_liftCurrencyRates.tsx" subtitle="Lift currency rates"
+
+```
+
+```diff 37:38,43:48
+
+```
+
+```jsx 36:40,57,60:66 file="./codeblocks/react/06_avoidRerenders.tsx" subtitle="Avoid rerenders"
+
+```
+
+```jsx 97:98,108 file="./codeblocks/react/07_orderLinePrice.tsx" subtitle="Price rate"
+
+```
+
+```jsx 44:80 file="./codeblocks/react/08_liftOrdersState.tsx" subtitle="Lift orders state"
+
+```
+
+```diff 82:93
+  Provider
+```
+
+```diff 183:184,187:193
+  Orders
+```
+
+```diff 152:157,165,173
+  OrderLine
+```
+
+```jsx 201:212,226 file="./codeblocks/react/09_addOrderButton.tsx" subtitle="Add order button"
+
+```
+
+```jsx file="./codeblocks/react/10_calculateTotal.tsx" subtitle="Calculate total"
 
 ```
 
 </CodeSurfer>
+
+<Notes>Only visible in presenter mode</Notes>
 
 ---
 
@@ -103,7 +102,7 @@ function incididunt(ipsum, ut = 1) {
 <Step>
 
 ```js
-const magna = aliqua => aliqua.ut((enim, ad) => enim, 0);
+const magna = (aliqua) => aliqua.ut((enim, ad) => enim, 0);
 ```
 
 ```js
@@ -125,7 +124,7 @@ const lorem = (ipsum, dolor, sit) => {
   );
 };
 
-const magna = aliqua => aliqua.ut((enim, ad) => enim, 0);
+const magna = (aliqua) => aliqua.ut((enim, ad) => enim, 0);
 ```
 
 ```js
