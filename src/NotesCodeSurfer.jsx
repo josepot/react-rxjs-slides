@@ -16,14 +16,39 @@ export default function NotesCodeSurfer({ children }) {
   );
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    console.log("stepNote", stepNote);
+    console.log("step", step);
+
     if (stepNote[step] < 0) return;
     const note = notes[stepNote[step]];
+    const metastring =
+      note.props.children &&
+      note.props.children.props.metastring;
+    if (metastring && metastring.startsWith("checkout:")) {
+      const path = metastring.split(":")[1];
+      console.log("loading", path);
+      fetch(`http://localhost:1714/${path}`, {
+        method: "POST",
+        signal,
+      }).catch((err) => {
+        if (err.name !== "AbortError") {
+          console.log("Error with the request", path, err);
+        }
+      });
+    }
 
     register(
       index,
       "notes",
-      note.props.children.props.children
+      note //.props.children.props.children
     );
+
+    return () => {
+      controller.abort();
+    };
   }, [step]);
 
   return <CodeSurfer>{codeFragments}</CodeSurfer>;

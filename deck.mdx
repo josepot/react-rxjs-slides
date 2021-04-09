@@ -16,8 +16,22 @@ You are using [MDX Deck](https://github.com/jxnblk/mdx-deck) and [Code Surfer](h
 
 <NotesCodeSurfer>
 
-```notes
-Notes for App
+```notes checkout:react-local-state/1
+Before we start coding, let's get familiar with
+the code that Matt -our awesome product designer-
+has prepared for us. Here we have the root
+component, which has two main sections:
+
+- The Orders component
+- And the Currencies
+
+and then, here in the middle: we have a button
+for adding orders and these OrderTotal component
+which renders the total sum of the
+base-currency-price of the orders.
+
+Perfect! Now, let's have a quick look at
+the Orders and the Currencies
 ```
 
 ```jsx 86:97 file="./codeblocks/react/01_startingpoint.tsx" subtitle="Starting point"
@@ -25,7 +39,14 @@ App;
 ```
 
 ```notes
-Notes for orders
+The Orders component is just a Table that
+renders the different Orders, using the
+OrdersLine Component.
+
+Also, we notice that the initial orders are
+currently hardcoded and they com from the
+initialOrders which is imported from the utils
+file.
 ```
 
 ```diff 70:78
@@ -33,7 +54,11 @@ Notes for orders
 ```
 
 ```notes
-Notes for orderline
+The Orderline component: very straightforward.
+It gets an Order through props and it renders
+its properties.
+Its worth noting, though, that the base-cc-price,
+which is a computed field, is currenctly hardcoded.
 ```
 
 ```diff 55:68
@@ -41,7 +66,14 @@ Notes for orderline
 ```
 
 ```notes
-Notes for currencies
+The Currencies Component is alost identical
+to the Orders component: just a table with
+different columns and it renders a CurrencyRate
+row for each currency.
+
+Like with the orders, the currencies are
+currently being hardcoded from the
+`initialCurrencyRates` also come from the utils file.
 ```
 
 ```diff 23:32
@@ -49,11 +81,23 @@ Notes for currencies
 ```
 
 ```notes
+The CurrencyRate component: this is the one 
+that it's used for editting the currencies
+and it's also very straightforward:
 
+It renders a currency, and it's rate value,
+which can be editted through the NumberInput
+component.
+
+Awesome! Now let's start coding!
 ```
 
 ```diff 11:21
   CurrencyRate
+```
+
+```notes checkout:react-local-state/2
+Notes for Currency context
 ```
 
 ```jsx 12:23 file="./codeblocks/react/02_currencyContext.tsx" subtitle="Currency context"
@@ -64,12 +108,24 @@ Notes for currencies
   CurrencyRate
 ```
 
+```notes checkout:react-local-state/3
+Add exchange rate state
+```
+
 ```jsx 26,31 file="./codeblocks/react/03_exchangeRate.tsx" subtitle="Add exchange rate state"
 
 ```
 
+```notes checkout:react-local-state/4
+Add price state
+```
+
 ```jsx file="./codeblocks/react/04_orderLinePrice.tsx" subtitle="Add price state"
 
+```
+
+```notes checkout:react-local-state/5
+Lift currency rates
 ```
 
 ```jsx 19:34 file="./codeblocks/react/05_liftCurrencyRates.tsx" subtitle="Lift currency rates"
@@ -80,12 +136,24 @@ Notes for currencies
 
 ```
 
+```notes checkout:react-local-state/7
+Avoid rerenders
+```
+
 ```jsx 36:40,57,60:66 file="./codeblocks/react/06_avoidRerenders.tsx" subtitle="Avoid rerenders"
 
 ```
 
+```notes checkout:react-local-state/8
+Price rate
+```
+
 ```jsx 97:98,108 file="./codeblocks/react/07_orderLinePrice.tsx" subtitle="Price rate"
 
+```
+
+```notes checkout:react-local-state/9
+Lift orders state
 ```
 
 ```jsx 44:80 file="./codeblocks/react/08_liftOrdersState.tsx" subtitle="Lift orders state"
@@ -104,8 +172,16 @@ Notes for currencies
   OrderLine
 ```
 
+```notes checkout:react-local-state/10
+Add order button
+```
+
 ```jsx 201:212,226 file="./codeblocks/react/09_addOrderButton.tsx" subtitle="Add order button"
 
+```
+
+```notes checkout:react-local-state/11
+Add order button
 ```
 
 ```jsx file="./codeblocks/react/10_calculateTotal.tsx" subtitle="Calculate total"
