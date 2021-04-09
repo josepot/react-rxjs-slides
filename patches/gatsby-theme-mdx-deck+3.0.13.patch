@@ -1,0 +1,13 @@
+diff --git a/node_modules/gatsby-theme-mdx-deck/src/components/app.js b/node_modules/gatsby-theme-mdx-deck/src/components/app.js
+index 8b03bf9..d16c51f 100644
+--- a/node_modules/gatsby-theme-mdx-deck/src/components/app.js
++++ b/node_modules/gatsby-theme-mdx-deck/src/components/app.js
+@@ -15,7 +15,7 @@ export default props => {
+   })
+ 
+   const register = (index, key, value) => {
+-    if (state.metadata[index] && state.metadata[index][key]) return
++    if (state.metadata[index] && state.metadata[index][key] && key !== 'notes') return
+     setState({
+       metadata: {
+         [index]: {

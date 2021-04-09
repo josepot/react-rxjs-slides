@@ -4,11 +4,14 @@
   "scripts": {
     "start": "mdx-deck deck.mdx",
     "build": "mdx-deck build deck.mdx",
-    "test": "echo \"there are no tests\""
+    "test": "echo \"there are no tests\"",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "code-surfer": "3.1.0",
-    "mdx-deck": "3.0.13"
+    "mdx-deck": "3.0.13",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0"
   },
   "name": "deck-reactivity"
 }

@@ -4,6 +4,7 @@ import {
   Step,
 } from "code-surfer";
 import { github, vsDark } from "@code-surfer/themes";
+import NotesCodeSurfer from "./src/NotesCodeSurfer";
 
 export const theme = vsDark;
 
@@ -13,22 +14,42 @@ You are using [MDX Deck](https://github.com/jxnblk/mdx-deck) and [Code Surfer](h
 
 ---
 
-<CodeSurfer>
+<NotesCodeSurfer>
+
+```notes
+Notes for App
+```
 
 ```jsx 86:97 file="./codeblocks/react/01_startingpoint.tsx" subtitle="Starting point"
 App;
+```
+
+```notes
+Notes for orders
 ```
 
 ```diff 70:78
   Orders
 ```
 
+```notes
+Notes for orderline
+```
+
 ```diff 55:68
   Orderline
 ```
 
+```notes
+Notes for currencies
+```
+
 ```diff 23:32
   Currencies
+```
+
+```notes
+
 ```
 
 ```diff 11:21
@@ -91,9 +112,7 @@ App;
 
 ```
 
-</CodeSurfer>
-
-<Notes>Only visible in presenter mode</Notes>
+</NotesCodeSurfer>
 
 ---
 
