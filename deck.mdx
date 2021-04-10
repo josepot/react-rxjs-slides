@@ -100,12 +100,28 @@ Awesome! Now let's start coding!
 Notes for Currency context
 ```
 
-```jsx 12:23 file="./codeblocks/react/02_currencyContext.tsx" subtitle="Currency context"
-
+```jsx 12:23 file="./codeblocks/react/02_1currencyContext.tsx"
 ```
 
-```diff 38
-  CurrencyRate
+```diff 37:46
+```
+
+```jsx 37:46 file="./codeblocks/react/02_2currencyContext.tsx"
+```
+
+```diff 48:67
+```
+
+```jsx 48:67 file="./codeblocks/react/02_3currencyContext.tsx"
+```
+
+```diff 100:111
+```
+
+```jsx 101,112 file="./codeblocks/react/02_4currencyContext.tsx"
+```
+
+```diff 25:35
 ```
 
 ```notes checkout:react-local-state/3
@@ -116,32 +132,43 @@ Add exchange rate state
 
 ```
 
+```diff 69:82 subtitle="Add price state"
+```
+
 ```notes checkout:react-local-state/4
 Add price state
 ```
 
 ```jsx file="./codeblocks/react/04_orderLinePrice.tsx" subtitle="Add price state"
+```
 
+```diff 12:23
 ```
 
 ```notes checkout:react-local-state/5
 Lift currency rates
 ```
 
-```jsx 19:34 file="./codeblocks/react/05_liftCurrencyRates.tsx" subtitle="Lift currency rates"
-
+```jsx 19:34 file="./codeblocks/react/05_1liftCurrencyRates.tsx" subtitle="Lift currency rates"
 ```
 
-```diff 37:38,43:48
+```diff 36:46
+```
 
+```jsx 37:38,45:47 file="./codeblocks/react/05_2liftCurrencyRates.tsx"
 ```
 
 ```notes checkout:react-local-state/7
 Avoid rerenders
 ```
 
-```jsx 36:40,57,60:66 file="./codeblocks/react/06_avoidRerenders.tsx" subtitle="Avoid rerenders"
+```diff 36:63
+```
 
+```jsx 36:40,57,60:66 file="./codeblocks/react/06_avoidRerenders.tsx" subtitle="Avoid rerenders"
+```
+
+```diff 93:108
 ```
 
 ```notes checkout:react-local-state/8
@@ -149,39 +176,55 @@ Price rate
 ```
 
 ```jsx 97:98,108 file="./codeblocks/react/07_orderLinePrice.tsx" subtitle="Price rate"
+```
 
+```diff 15:55 subtitle="Lift orders state"
 ```
 
 ```notes checkout:react-local-state/9
 Lift orders state
 ```
 
-```jsx 44:80 file="./codeblocks/react/08_liftOrdersState.tsx" subtitle="Lift orders state"
-
+```jsx 44:80 file="./codeblocks/react/08_1liftOrdersState.tsx"
 ```
 
-```diff 82:93
-  Provider
+```jsx 82:93 file="./codeblocks/react/08_2liftOrdersState.tsx"
 ```
 
-```diff 183:184,187:193
-  Orders
+```diff 171:180
 ```
 
-```diff 152:157,165,173
-  OrderLine
+```jsx 172:173,177:182 file="./codeblocks/react/08_3liftOrdersState.tsx"
+```
+
+```diff 152:169
+```
+
+```jsx 152:156,164:166,172:174 file="./codeblocks/react/08_4liftOrdersState.tsx"
+```
+
+```diff 204:217
+```
+
+```jsx 206,217 file="./codeblocks/react/08_5liftOrdersState.tsx"
+```
+
+```diff 211 subtitle="Add order button"
 ```
 
 ```notes checkout:react-local-state/10
 Add order button
 ```
 
-```jsx 201:212,226 file="./codeblocks/react/09_addOrderButton.tsx" subtitle="Add order button"
+```jsx 201:212,226 file="./codeblocks/react/09_addOrderButton.tsx"
 
 ```
 
 ```notes checkout:react-local-state/11
-Add order button
+Total
+```
+
+```diff 214:217
 ```
 
 ```jsx file="./codeblocks/react/10_calculateTotal.tsx" subtitle="Calculate total"
