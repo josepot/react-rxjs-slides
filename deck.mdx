@@ -93,14 +93,26 @@ Awesome! Now let's start coding!
 ```
 
 ```diff 11:21
-  CurrencyRate
 ```
 
 ```notes checkout:react-local-state/2
-Notes for Currency context
+We have noticed that the currencies are
+being used in the 2 main components. So,
+this is data that needs to be accessed by
+different components at different levels,
+let's put use React Context to have them
+easily available.
+
+We create a hook to easily access the
+currencies, and a CurrenciesProvider that
+we will use in our root component.
 ```
 
 ```jsx 12:23 file="./codeblocks/react/02_1currencyContext.tsx"
+```
+
+```notes
+Let's use the `useCurrencies` hook.
 ```
 
 ```diff 37:46
@@ -109,10 +121,21 @@ Notes for Currency context
 ```jsx 37:46 file="./codeblocks/react/02_2currencyContext.tsx"
 ```
 
+```notes
+Again...
+```
+
 ```diff 48:67
 ```
 
 ```jsx 48:67 file="./codeblocks/react/02_3currencyContext.tsx"
+```
+
+```notes
+And let's use the CurrenciesProvider
+in our root component.
+
+Ok, that wasn't too hard!
 ```
 
 ```diff 100:111
@@ -121,35 +144,108 @@ Notes for Currency context
 ```jsx 101,112 file="./codeblocks/react/02_4currencyContext.tsx"
 ```
 
+```notes
+Next, we will make sure that the
+Exchanges rate section works as it's
+supposed to.
+```
+
 ```diff 25:35
 ```
 
 ```notes checkout:react-local-state/3
-Add exchange rate state
+Easy peasy! `useState` here and that's
+it!.
+
+I mean, we shouldn't be lifting
+state unless we have to, right?
+
+Look at that! This is working just great,
+and without any annoying re-renders
+on the components that are not concerned
+with the currency that we just updated.
+
+Now  that we are done with
+the Exchanges Rate section
+let's move on to the Orders
+section.
 ```
 
-```jsx 26,31 file="./codeblocks/react/03_exchangeRate.tsx" subtitle="Add exchange rate state"
-
+```jsx 26,31 file="./codeblocks/react/03_exchangeRate.tsx"
 ```
 
-```diff 69:82 subtitle="Add price state"
+```notes
+Let's first make sure that the price and
+the currency of each order get
+properly updated.
+```
+
+```diff 69:82
 ```
 
 ```notes checkout:react-local-state/4
-Add price state
+Once again, a couple of `useState`
+here and we are done! Let's make sure
+that this is working correctly...
+
+Amazing! Look at that: we got 80% of
+the functionality working with just 3
+`useState`.
+
+Ok, now let's make sure that the
+base-currency-price gets properly updated...
+
+Oh, wait! shut! Mmmm.. In order to compute
+this value we will need to know the rate
+of the selected currency.
+
+Well, that's ok, we just need to lift
+the state of the currency-rates, right?
+No big deal... Let's do it.
 ```
 
 ```jsx file="./codeblocks/react/04_orderLinePrice.tsx" subtitle="Add price state"
+```
+
+```notes
+Let's just create another Context for
+the currencyRates.
 ```
 
 ```diff 12:23
 ```
 
 ```notes checkout:react-local-state/5
-Lift currency rates
+we create the useCurencyRates hook to
+easily access the state of the
+currencyRates and a ContextProvider
+that we will place in the already
+existing Currencies Provider.
 ```
 
-```jsx 19:34 file="./codeblocks/react/05_1liftCurrencyRates.tsx" subtitle="Lift currency rates"
+```jsx 19:23,29,31 file="./codeblocks/react/05_1liftCurrencyRates.tsx"
+```
+
+```notes
+then we replace the useState with
+our `useCurrencyRatesHook` and that's
+it!
+
+Lifting state it's always a bit of
+a pain, but it's not that bad, right?
+
+Ok, now let's make sure that the
+currency rates are still working...
+
+Yep, they do work, but wait...
+Oh, cmon, now every single row re-renders?
+
+Oh, of course, because now every time
+that a currency-rate changes the whole
+record changes... We could prevent
+the re-renders if the Orders component
+used the hook
+
 ```
 
 ```diff 36:46
@@ -232,56 +328,6 @@ Total
 ```
 
 </NotesCodeSurfer>
-
----
-
-<CodeSurferColumns themes={[vsDark, github]}>
-
-<Step>
-
-```js
-const magna = (aliqua) => aliqua.ut((enim, ad) => enim, 0);
-```
-
-```js
-const minim = (ad, enim) => dolore.magna(ad / enim);
-```
-
-</Step>
-
-<Step>
-
-```js
-const lorem = (ipsum, dolor, sit) => {
-  const amet = dolor - ipsum;
-  return consectetur.adipiscing(
-    {
-      elit: sed.eiusmod(sit - dolor) / amet + 2,
-    },
-    (tempor, incididunt) => ipsum + amet * incididunt
-  );
-};
-
-const magna = (aliqua) => aliqua.ut((enim, ad) => enim, 0);
-```
-
-```js
-const minim = (ad, enim) => dolore.magna(ad / enim);
-
-const sed = (eiusmod, tempor, incididunt) => {
-  const ut = tempor - eiusmod;
-  return labore.et(
-    {
-      amet: dolore.magna(incididunt - tempor) / ut + 2,
-    },
-    (aliqua, elit) => eiusmod + ut * elit
-  );
-};
-```
-
-</Step>
-
-</CodeSurferColumns>
 
 ---
 
@@ -384,5 +430,102 @@ const sed = (eiusmod, tempor, incididunt) => {
 
 ---
 
-docs:  
-[codesurfer.pomb.us](https://codesurfer.pomb.us)
+<CodeSurferColumns themes={[vsDark, github]}>
+
+<Step>
+
+```jsx file="./codeblocks/react/01_startingpoint.tsx"
+```
+
+```jsx file="./codeblocks/react-rxjs/01_startingpoint.tsx"
+```
+
+</Step>
+
+<Step>
+
+```jsx file="./codeblocks/react/10_calculateTotal.tsx"
+```
+
+```jsx file="./codeblocks/react-rxjs/08_perf.tsx"
+```
+
+</Step>
+
+</CodeSurferColumns>
+
+---
+
+<CodeSurferColumns themes={[vsDark, github]}>
+
+<Step>
+
+```jsx file="./codeblocks/react/01_startingpoint.tsx"
+```
+
+```jsx file="./codeblocks/react-rxjs/01_startingpoint.tsx"
+```
+
+</Step>
+
+<Step>
+
+```jsx file="./codeblocks/react/02_4currencyContext.tsx"
+```
+
+```jsx file="./codeblocks/react-rxjs/02_3useCurrencies.tsx"
+```
+
+</Step>
+
+<Step>
+
+```jsx file="./codeblocks/react/03_exchangeRate.tsx"
+```
+
+```jsx file="./codeblocks/react-rxjs/03_2exchangeCurrencies.tsx"
+```
+
+</Step>
+
+<Step>
+
+```jsx file="./codeblocks/react/04_orderLinePrice.tsx"
+```
+
+```jsx file="./codeblocks/react-rxjs/04_3orderLinePriceCurrency.tsx"
+```
+
+</Step>
+
+<Step>
+
+```jsx file="./codeblocks/react/07_orderLinePrice.tsx"
+```
+
+```jsx file="./codeblocks/react-rxjs/05_2orderLineBaseCurrency.tsx"
+```
+
+</Step>
+
+<Step>
+
+```jsx file="./codeblocks/react/09_addOrderButton.tsx"
+```
+
+```jsx file="./codeblocks/react-rxjs/06_2addOrder.tsx"
+```
+
+</Step>
+
+<Step>
+
+```jsx file="./codeblocks/react/10_calculateTotal.tsx"
+```
+
+```jsx file="./codeblocks/react-rxjs/08_perf.tsx"
+```
+
+</Step>
+
+</CodeSurferColumns>
