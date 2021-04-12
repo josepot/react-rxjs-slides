@@ -104,8 +104,8 @@ const Orders = () => {
   return (
     <Table columns={["Article", "Price", "Currency", "Price in £"]}>
       {orderIds.map((id) => (
-        <Subscribe source$={order$(id)}>
-          <Orderline key={id} id={id} />
+        <Subscribe key={id} source$={order$(id)}>
+          <Orderline id={id} />
         </Subscribe>
       ))}
     </Table>

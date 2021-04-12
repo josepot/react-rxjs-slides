@@ -19,11 +19,8 @@ export default function NotesCodeSurfer({ children }) {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    console.log("stepNote", stepNote);
-    console.log("step", step);
-
-    if (stepNote[step] < 0) return;
     const note = notes[stepNote[step]];
+    if (!note) return;
     const metastring =
       note.props.children &&
       note.props.children.props.metastring;

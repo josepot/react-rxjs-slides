@@ -34,7 +34,7 @@ Perfect! Now, let's have a quick look at
 the Orders and the Currencies
 ```
 
-```jsx 86:97 file="./codeblocks/react/01_startingpoint.tsx" subtitle="Starting point"
+```jsx 86:97 file="./codeblocks/react/01_startingpoint.tsx"
 App;
 ```
 
@@ -66,14 +66,15 @@ which is a computed field, is currenctly hardcoded.
 ```
 
 ```notes
-The Currencies Component is alost identical
+The Currencies Component is almost identical
 to the Orders component: just a table with
 different columns and it renders a CurrencyRate
 row for each currency.
 
 Like with the orders, the currencies are
 currently being hardcoded from the
-`initialCurrencyRates` also come from the utils file.
+`initialCurrencyRates` also come from the
+utils file.
 ```
 
 ```diff 23:32
@@ -145,17 +146,16 @@ Ok, that wasn't too hard!
 ```
 
 ```notes
-Next, we will make sure that the
-Exchanges rate section works as it's
-supposed to.
+Now lets wire up the
+Exchanges Rate section
 ```
 
 ```diff 25:35
 ```
 
 ```notes checkout:react-local-state/3
-Easy peasy! `useState` here and that's
-it!.
+Easy! Let's keep it simple,
+using `useState` should do.
 
 I mean, we shouldn't be lifting
 state unless we have to, right?
@@ -175,51 +175,52 @@ section.
 ```
 
 ```notes
-Let's first make sure that the price and
-the currency of each order get
-properly updated.
+Let's start by wiring up the price
+and currency selection of each
+order.
 ```
 
 ```diff 69:82
 ```
 
 ```notes checkout:react-local-state/4
-Once again, a couple of `useState`
-here and we are done! Let's make sure
-that this is working correctly...
+And again, a couple of `useState`
+here and that's it!
 
-Amazing! Look at that: we got 80% of
-the functionality working with just 3
-`useState`.
+Now let's make sure that this is
+working correctly...
 
-Ok, now let's make sure that the
-base-currency-price gets properly updated...
+Amazing! Look at that: we got ~75% of
+the functionality working already.
 
-Oh, wait! shut! Mmmm.. In order to compute
-this value we will need to know the rate
+Ok, now let's wire up the
+base-currency-price...
+
+Oh, wait! shut! Mmmm... To calculate
+this value we have to access the rate
 of the selected currency.
 
-Well, that's ok, we just need to lift
+All right, that's ok, we just need to lift
 the state of the currency-rates, right?
 No big deal... Let's do it.
 ```
 
-```jsx file="./codeblocks/react/04_orderLinePrice.tsx" subtitle="Add price state"
+```jsx file="./codeblocks/react/04_orderLinePrice.tsx"
 ```
 
 ```notes
-Let's just create another Context for
-the currencyRates.
+We create another Context for the
+currencyRates.
 ```
 
 ```diff 12:23
 ```
 
 ```notes checkout:react-local-state/5
-we create the useCurencyRates hook to
-easily access the state of the
+then we create a useCurencyRates hook
+to easily access the state of the
 currencyRates and a ContextProvider
-that we will place in the already
+that we can place in the already
 existing Currencies Provider.
 ```
 
@@ -228,24 +229,35 @@ existing Currencies Provider.
 
 ```notes
 then we replace the useState with
-our `useCurrencyRatesHook` and that's
-it!
+our `useCurrencyRatesHook` and...
+we are done!
 
-Lifting state it's always a bit of
-a pain, but it's not that bad, right?
+Lifting state it's a bit of a pain,
+but it's not so bad, right?
 
-Ok, now let's make sure that the
+Ok, let's make sure that the
 currency rates are still working...
 
-Yep, they do work, but wait...
+Ok, so, they do work, but wait...
 Oh, cmon, now every single row re-renders?
 
 Oh, of course, because now every time
 that a currency-rate changes the whole
-record changes... We could prevent
-the re-renders if the Orders component
-used the hook
+record changes and that triggers
+a re-render per each row... Dang!
 
+Ok, there are a number of ways
+that we can use to prevent these
+re-renders... But I guess that the
+simplest in this case is to let
+the parent component pass
+everything down to the CurrencyRate
+component and then use the memo
+HOC to prevent the CurrencyRate
+component from re-rendering.
+
+All right, all right, let's do
+that...
 ```
 
 ```diff 36:46
@@ -254,62 +266,217 @@ used the hook
 ```jsx 37:38,45:47 file="./codeblocks/react/05_2liftCurrencyRates.tsx"
 ```
 
-```notes checkout:react-local-state/7
-Avoid rerenders
-```
-
 ```diff 36:63
 ```
 
-```jsx 36:40,57,60:66 file="./codeblocks/react/06_avoidRerenders.tsx" subtitle="Avoid rerenders"
+```notes checkout:react-local-state/7
+Now the Currencies component
+is the one passing down everything
+that the CurrencyRate component
+needs, and then we ehance
+the CurrencyRate component
+with `memo` to prevent
+re-renders
+```
+
+```jsx 36:40,57,60:66 file="./codeblocks/react/06_avoidRerenders.tsx"
+```
+
+```notes
+We are finally ready
+to wire-up the base-ccy-price.
 ```
 
 ```diff 93:108
 ```
 
 ```notes checkout:react-local-state/8
-Price rate
+We obtain the currencyRates
+from context and then we
+can calculate the baseCurrencyPrice
+using the getBaseCurrencyPrice
+function that's defined in
+the utils file.
+
+Let's try it:
+
+Nice, it's working...
+
+Although every time that
+we change a currency rate
+every single order
+re-renders, even when
+we change a currency rate
+that's not being used...
+
+Of course, because we
+are accessing the currencyRates
+from the Orderline component
+and now every time that
+one of the currencies
+changes that triggers
+a re-render in every
+Order...
+
+We could prevent that
+if the Orderline Component
+received through props
+the rate that its relevant
+to them. However, in order
+to know that, we need to
+be able to access from
+the outside the selected
+currency... So, we should
+also lift the state of
+the selected currency.
+
+Actually, we will have
+to do that anyways, because
+I just noticed that we will
+need to access the state
+of the base-ccy-price from
+the outside to compute
+the sum...
+
+So, let's lift this state.
 ```
 
-```jsx 97:98,108 file="./codeblocks/react/07_orderLinePrice.tsx" subtitle="Price rate"
+```jsx 97:98,108 file="./codeblocks/react/07_orderLinePrice.tsx"
 ```
 
-```diff 15:55 subtitle="Lift orders state"
+```notes
+Let's add a new context for
+the orders, but before we
+do that, we will first
+create a reducer for
+the Orders, because now
+it's state is a bit more
+complex than just setting
+a property. Also, this
+will help us to prevent
+re-renders, because we
+will be able to pass
+the `dispatch` down
+without createing new
+functions.
+```
+
+```diff 15:55
 ```
 
 ```notes checkout:react-local-state/9
-Lift orders state
+The reducer is a bit
+verbose, but it makes
+things easier for the
+consumer of dispatch.
 ```
 
 ```jsx 44:80 file="./codeblocks/react/08_1liftOrdersState.tsx"
 ```
 
+```notes
+Now we can create the context
+for the orders... As usual
+we create a hook for accessing
+the orders from context
+and a Provider that
+we will place in our
+root component.
+```
+
 ```jsx 82:93 file="./codeblocks/react/08_2liftOrdersState.tsx"
+```
+
+```notes
+Now lets change the Orders
+component so that it
+accesses the currencies
+and the orders from
+context and it spoon-feeds
+the Orderline Component
 ```
 
 ```diff 171:180
 ```
 
+```notes
+That's it...
+```
+
 ```jsx 172:173,177:182 file="./codeblocks/react/08_3liftOrdersState.tsx"
+```
+
+```notes
+And time to make the
+Orderline component a lot
+dummer.
 ```
 
 ```diff 152:169
 ```
 
+```notes
+Now the Orderline component
+receives everythng from props
+and the onChange handlers
+are a bit more verbose than
+before, but that's ok.
+```
+
 ```jsx 152:156,164:166,172:174 file="./codeblocks/react/08_4liftOrdersState.tsx"
+```
+
+```notes
+And let's not forget to add
+the OrdersProvider
 ```
 
 ```diff 204:217
 ```
 
+```notes
+Alright, now that we've
+lifted the state, let's
+make sure that we don't have
+unwanted re-renders.
+
+Nice!
+
+Now we are finally ready
+to make the Add button and
+the OrderTotal component
+work.
+```
+
 ```jsx 206,217 file="./codeblocks/react/08_5liftOrdersState.tsx"
 ```
 
-```diff 211 subtitle="Add order button"
+```notes
+Let's start with the Add
+button. Ok, so we better
+create a component for this
+button... Otherwise we
+will be triggering re-renders
+everywhere every time that
+one of the orders change...
+
+I guess that we could have
+split the context of the orders
+to separate the dispatch from
+the state... Maybe next time!
+```
+
+```diff 211
 ```
 
 ```notes checkout:react-local-state/10
-Add order button
+So, here we have the new
+component accessing the
+dispatch for creating a new row.
+
+Let's see if it works...
+
+Awesome!
 ```
 
 ```jsx 201:212,226 file="./codeblocks/react/09_addOrderButton.tsx"
@@ -317,13 +484,51 @@ Add order button
 ```
 
 ```notes checkout:react-local-state/11
-Total
+Almost done! Let's wire
+this one up, and that's it...
 ```
 
 ```diff 214:217
 ```
 
-```jsx file="./codeblocks/react/10_calculateTotal.tsx" subtitle="Calculate total"
+```notes
+So, we access the orders
+and the currencyRates and
+we map each order to calculate
+its base-ccy-price and then
+we add them all together
+and we are done!
+
+It bothers me a bit that
+I have to recalculate the
+base-ccy-price per each
+order, because we have already
+done this in the Orderline
+component...
+
+But, how else are we going
+to do this using React as
+a state-management library?
+
+Create a common reducer
+between the currencies and
+the orders? So that we can
+update the base-ccy-price
+every time that one of
+them change? That would
+be pretty bad...
+
+Should we use a library
+like reselect for memoizing
+these computations? That
+wouldn't work either
+because each Order
+is a different computation.
+
+Anyways, this does the trick.
+```
+
+```jsx file="./codeblocks/react/10_calculateTotal.tsx"
 
 ```
 
@@ -331,9 +536,62 @@ Total
 
 ---
 
+# Tree view vs Graph state
+
+---
+
+# Solving the same problem with React-RxJS
+
+---
+
 <NotesCodeSurfer>
 
+```notes checkout:react-rxjs/1
+The starting point is the same as before.
+
+And the first thing that we 
+did was to put the currencies
+in context.
+```
+
 ```jsx 86:97 file="./codeblocks/react-rxjs/01_startingpoint.tsx"
+```
+
+```notes checkout:react-rxjs/2
+With React-RxJS we can use
+bind for accomplishing the
+same thing.
+
+`bind` is the core of React-RxJS.
+This is how it works:
+- We pass an observalbe to it
+- And optionally an initial value,
+this initial value will only
+be used if the observable
+hasn't emitted anything yet.
+
+and it returns a tuple with:
+- A react-hook and
+- The underlying observable that
+the hook is going to use. This,
+observable is multicasted and
+it replays the latest emitted value.
+It's very similar to `shareReplay(1)`,
+but it doesn't create memory-leaks,
+because when all it's subscribers
+unsubscribe from it, it clears
+its state and it unsubscribes from
+its source.
+
+Using `bind` here could look like
+an overkill, but it has 2 advantages
+over using context:
+- It's a lot easier to setup.
+- If in the future the currencies
+is a dynamic value, we can just
+replace `EMPTY` with the stream
+of currencies without changing
+anything else.
 ```
 
 ```jsx 13 file="./codeblocks/react-rxjs/02_1useCurrencies.tsx"
@@ -348,46 +606,225 @@ Total
 ```diff 42
 ```
 
+```notes
+Now let's wire up the Exchange Rates
+```
+
 ```jsx 42 file="./codeblocks/react-rxjs/02_3useCurrencies.tsx"
+```
+
+```notes checkout:react-rxjs/3
+What's going on here?
+
+The first line that's highlited uses
+the util `createKeyedSignal` to create
+a "signal" for each currency.
+
+What this does is like creating
+a subject per each currency, while
+also separating the Observable and
+the Observer.
+
+In other words: `onRateChange` is
+a void function that receives 2
+arguments: a currency, which is
+the key, and a number: which is
+the payload.
+
+We can use this function to
+emit values through the observalbe.
+
+- `rateChange$`, on the other hand,
+is a function that receives the
+currency as an argument and it returns
+the observable of numbers for that
+currency.
+
+The nice thing about bind is that
+we can also use it with with what
+we call parametric observables,
+like `rageChange$`.
+
+Let's put this to use.
 ```
 
 ```jsx 15:19 file="./codeblocks/react-rxjs/03_1exchangeCurrencies.tsx"
 ```
 
+```notes
+Let's replace rate with our hook
+and add pass the `onRateChange`
+handler to the `onChange` of `NumberInput`
+```
+
 ```diff 21:31
+```
+
+```notes
+Let's make sure that this works.
+
+It does! Also notice how the only
+rows that are re-rendering are the
+ones that are being updated.
+
+Now, let's wire up the Orders:
 ```
 
 ```jsx 23,30:32 file="./codeblocks/react-rxjs/03_2exchangeCurrencies.tsx"
 ```
 
+```notes checkout:react-rxjs/4
+First we create a hook for accessing
+the ids of the orders. We use the same
+trick that we used for wiring up the
+currencies, so that when the orders
+start changing, we can just replace
+the EMPTY stream with the Observable
+of orderIds.
+
+Next we create a keyed signal
+for the priceChange and another one
+for the currencyChange.
+
+and finally we use bind for creating
+the observable of each order.
+
+I love the fact that on RxJS 7 we can
+pass Objects of streams to `combineLatest`.
+
+Notice that this time we are not
+using a default value with `bind`. The
+main implication of not passing the default
+value to bind is that we have to make
+sure that we are subscribed to the
+underlying observable before render.
+
+You will see what that means in just a sec.
+```
+
 ```jsx 22:36 file="./codeblocks/react-rxjs/04_1orderLinePriceCurrency.tsx"
+```
+
+```notes
+Let's wired up the Orders component.
 ```
 
 ```diff 102:111
 ```
 
+```notes
+We grab the ids from the `useOrderIds`
+and now we only pass the id to the OrderLine
+component.
+
+Also, we are using `Subscribe` to ensure
+that the subscription to the underlying 
+stream exists before the Orderline component
+renders.
+
+This is only necessary b/c the
+`useOrder` hook was created with a bind
+that didn't have a default value.
+
+Later we will see that there is a more
+convenient way of accomplishing the same.
+```
+
 ```jsx 103,107:109 file="./codeblocks/react-rxjs/04_2orderLinePriceCurrency.tsx"
+```
+
+```notes
+moving on into the Orderline component...
 ```
 
 ```diff 87:100
 ```
 
-```jsx 88,95:97,103:105 file="./codeblocks/react-rxjs/04_3orderLinePriceCurrency.tsx"
+```notes
+First notice how now it only receives
+the id, and then we use the `useOrder`
+hook to access the order with this id.
+
+We are also plugging the onPriceChange
+and the onCurrencyChange, that's it.
+
+Let's make sure that this works...
+
+Nice!
+
+Time to wire up the baseCurrencyPrice...
+```
+
+```jsx 87,88,95:97,103:105 file="./codeblocks/react-rxjs/04_3orderLinePriceCurrency.tsx"
+```
+
+```notes
+Notice how the order$ stream is fact the
+combination of the price and the currency
+stream...
+
+So, we could also create a rate$ stream
+for theselected currency, and then combine
+it with the that the price stream to obtain
+a baseCurrencyPrice stream.
+
+So, let's do that.
 ```
 
 ```diff 28:36
 ```
 
+```notes checkout:react-rxjs/5
+First we define the rate$ stream,
+which listens to the currency$ stream
+and every time that it emits it's going
+going to switchMap to the currencyRate$
+stream of this currency.
+
+Keep in mind that the streams returned
+by bind are replayable.
+
+Now we can combine the rate with the
+price stream, so that whenever one 
+of them emits the baseCurrencyPrice
+gets recomputed.
+
+Now let's use this stream to add the
+new baseCurrencyPrice property to the order.
+
+That's it, now let's use it.
+```
+
 ```jsx 18,34:37,42 file="./codeblocks/react-rxjs/05_1orderLineBaseCurrency.tsx"
 ```
 
+```notes
+we replace the hardcoded value with
+the new property and done!
+```
+
 ```diff 116
+```
+
+```notes
+and we are done. let's try it out!
+
+Notice that we never get re-renders
+for unrelated things.
+
+If we change the price of a currency
+that's not being used, nothing else
+get's re-rendered.
 ```
 
 ```jsx 116 file="./codeblocks/react-rxjs/05_2orderLineBaseCurrency.tsx"
 ```
 
 ```diff 24
+```
+
+```notes checkout:react-rxjs/6
+Add order
 ```
 
 ```jsx 25:33,39 file="./codeblocks/react-rxjs/06_1addOrder.tsx"
@@ -400,6 +837,10 @@ Total
 ```
 
 ```diff 27,51
+```
+
+```notes checkout:react-rxjs/7
+Total
 ```
 
 ```jsx 27,55:58 file="./codeblocks/react-rxjs/07_1Total.tsx"
@@ -421,6 +862,10 @@ Total
 ```
 
 ```diff 110
+```
+
+```notes checkout:react-rxjs/8
+perf
 ```
 
 ```jsx 111 file="./codeblocks/react-rxjs/08_perf.tsx"
