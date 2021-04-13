@@ -1,7 +1,30 @@
 import { bind } from "@react-rxjs/core"
-import { createKeyedSignal } from "@react-rxjs/utils"
-import { combineLatest, concat, EMPTY } from "rxjs"
-import { map } from "rxjs/operators"
+import { combineKeys, createKeyedSignal, createSignal } from "@react-rxjs/utils"
+import { memo } from "react"
+import {
+  combineLatest,
+  concat,
+  defer,
+  EMPTY,
+  merge,
+  Observable,
+  pipe,
+  timer,
+} from "rxjs"
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  mapTo,
+  mergeMap,
+  pluck,
+  repeat,
+  scan,
+  switchMap,
+  take,
+  takeWhile,
+  withLatestFrom,
+} from "rxjs/operators"
 import {
   initialCurrencyRates,
   formatCurrency,
@@ -9,31 +32,72 @@ import {
   formatPrice,
   initialOrders,
   Table,
+  getBaseCurrencyPrice,
+  uuidv4,
+  getRandomOrder,
+  isCurrecyRateValid,
 } from "./utils"
 
 const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
 
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
-const [useCurrencyRate] = bind(
-  rateChange$,
-  (currency) => initialCurrencyRates[currency],
+
+enum CurrencyRateState {
+  ACCEPTED,
+  DIRTY,
+  IN_PROGRESS,
+}
+
+interface CurrencyRate {
+  value: number
+  state: CurrencyRateState
+}
+
+const [useCurrencyRate, currencyRate$] = bind(
+  (currency: string) => new Observable<CurrencyRate>(),
+  (currency) => ({
+    state: CurrencyRateState.ACCEPTED,
+    value: initialCurrencyRates[currency],
+  }),
 )
 
 const initialOrderIds = Object.keys(initialOrders)
-const [useOrderIds, orderIds$] = bind(EMPTY, initialOrderIds)
+const [addOrder$, onAddOrder] = createSignal()
+const [useOrderIds, orderIds$] = bind(
+  addOrder$.pipe(
+    map(uuidv4),
+    scan((acc, id) => [...acc, id], initialOrderIds),
+  ),
+  initialOrderIds,
+)
 
 const [priceChange$, onPriceChange] = createKeyedSignal<string, number>()
 const [currencyChange$, onCurrencyChange] = createKeyedSignal<string, string>()
 
 const [useOrder, order$] = bind((id: string) => {
-  const initialOrder = initialOrders[id]
+  const initialOrder = initialOrders[id] || getRandomOrder(id)
   const price$ = concat([initialOrder.price], priceChange$(id))
   const currency$ = concat([initialOrder.currency], currencyChange$(id))
 
-  return combineLatest({ price: price$, currency: currency$ }).pipe(
-    map((update) => ({ ...initialOrder, ...update })),
+  const rate$ = currency$.pipe(switchMap((ccy) => currencyRate$(ccy)))
+  const baseCurrencyPrice$ = combineLatest([price$, rate$]).pipe(
+    map(([price, rate]) => getBaseCurrencyPrice(price, rate)),
   )
+
+  return combineLatest({
+    price: price$,
+    currency: currency$,
+    baseCurrencyPrice: baseCurrencyPrice$,
+  }).pipe(map((update) => ({ ...initialOrder, ...update })))
 })
+
+const [useTotal, total$] = bind(
+  combineKeys(orderIds$, pipe(order$, pluck("baseCurrencyPrice"))).pipe(
+    map((prices) => Array.from(prices.values()).reduce((a, b) => a + b, 0)),
+  ),
+)
+
+total$.subscribe()
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
   const rate = useCurrencyRate(currency)
@@ -84,34 +148,45 @@ const CurrencySelector: React.FC<{
   )
 }
 
-const Orderline: React.FC<Order> = (order) => {
+const Orderline: React.FC<{ id: string }> = memo(({ id }) => {
+  const order = useOrder(id)
   return (
     <tr>
       <td>{order.title}</td>
       <td>
-        <NumberInput value={order.price} onChange={() => {}} />
+        <NumberInput
+          value={order.price}
+          onChange={(value) => {
+            onPriceChange(id, value)
+          }}
+        />
       </td>
       <td>
-        <CurrencySelector value={order.currency} onChange={() => {}} />
+        <CurrencySelector
+          value={order.currency}
+          onChange={(value) => {
+            onCurrencyChange(id, value)
+          }}
+        />
       </td>
-      <td>{formatPrice(1000)} £</td>
+      <td>{formatPrice(order.baseCurrencyPrice)} £</td>
     </tr>
   )
-}
+})
 
 const Orders = () => {
-  const orders = Object.values(initialOrders)
+  const orderIds = useOrderIds()
   return (
     <Table columns={["Article", "Price", "Currency", "Price in £"]}>
-      {orders.map((order) => (
-        <Orderline key={order.id} {...order} />
+      {orderIds.map((id) => (
+        <Orderline key={id} id={id} />
       ))}
     </Table>
   )
 }
 
 const OrderTotal = () => {
-  const total = 10000
+  const total = useTotal()
   return <div className="total">{formatPrice(total)} £</div>
 }
 
@@ -120,7 +195,7 @@ const App = () => (
     <h1>Orders</h1>
     <Orders />
     <div className="actions">
-      <button onClick={() => {}}>Add</button>
+      <button onClick={onAddOrder}>Add</button>
       <OrderTotal />
     </div>
     <h1>Exchange rates</h1>

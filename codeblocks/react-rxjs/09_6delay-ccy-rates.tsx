@@ -1,7 +1,30 @@
 import { bind } from "@react-rxjs/core"
 import { combineKeys, createKeyedSignal, createSignal } from "@react-rxjs/utils"
-import { combineLatest, concat, EMPTY, pipe } from "rxjs"
-import { map, pluck, scan, switchMap } from "rxjs/operators"
+import { memo } from "react"
+import {
+  combineLatest,
+  concat,
+  defer,
+  EMPTY,
+  merge,
+  Observable,
+  pipe,
+  timer,
+} from "rxjs"
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  mapTo,
+  mergeMap,
+  pluck,
+  repeat,
+  scan,
+  switchMap,
+  take,
+  takeWhile,
+  withLatestFrom,
+} from "rxjs/operators"
 import {
   initialCurrencyRates,
   formatCurrency,
@@ -12,14 +35,82 @@ import {
   getBaseCurrencyPrice,
   uuidv4,
   getRandomOrder,
+  isCurrecyRateValid,
 } from "./utils"
 
-const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
+const [useCurrencies, currencies$] = bind(EMPTY, Object.keys(initialCurrencyRates))
 
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
+
+enum CurrencyRateState {
+  ACCEPTED,
+  DIRTY,
+  IN_PROGRESS,
+}
+
+interface CurrencyRate {
+  value: number
+  state: CurrencyRateState
+}
+
 const [useCurrencyRate, currencyRate$] = bind(
-  rateChange$,
-  (currency) => initialCurrencyRates[currency],
+  (currency: string): Observable<CurrencyRate> => {
+    const latestAcceptedValue$ = acceptedCurrencyRates$(currency).pipe(take(1))
+
+    const getNextAcceptedValue$ = (candidateValue: number) =>
+      defer(() => isCurrecyRateValid(currency, candidateValue)).pipe(
+        mergeMap((isOk) => (isOk ? [candidateValue] : latestAcceptedValue$)),
+        map((value) => ({
+          value,
+          state: CurrencyRateState.ACCEPTED,
+        })),
+      )
+
+    const delayServerValidation = () =>
+      pipe(
+        withLatestFrom(latestAcceptedValue$),
+        switchMap(([value, latestAccepted]) =>
+          value === latestAccepted
+            ? [{ value, state: CurrencyRateState.ACCEPTED }]
+            : concat(
+                [{ value, state: CurrencyRateState.DIRTY }],
+                timer(500).pipe(
+                  mapTo({ value, state: CurrencyRateState.IN_PROGRESS }),
+                ),
+              ),
+        ),
+        takeWhile(({ state }) => state !== CurrencyRateState.IN_PROGRESS, true),
+      )
+
+    const validateRateCurrency = () =>
+      mergeMap(({ value, state }) =>
+        concat(
+          [{ value, state }],
+          state === CurrencyRateState.IN_PROGRESS
+            ? getNextAcceptedValue$(value)
+            : [],
+        ),
+      )
+
+    return rateChange$(currency).pipe(
+      delayServerValidation(),
+      validateRateCurrency(),
+      repeat(),
+    )
+  },
+  (currency: string) => ({
+    state: CurrencyRateState.ACCEPTED,
+    value: initialCurrencyRates[currency],
+  }),
+)
+
+const [, acceptedCurrencyRates$] = bind(
+  pipe(
+    currencyRate$,
+    filter(({ state }) => state === CurrencyRateState.ACCEPTED),
+    pluck("value"),
+    distinctUntilChanged(),
+  ),
 )
 
 const initialOrderIds = Object.keys(initialOrders)
@@ -40,7 +131,7 @@ const [useOrder, order$] = bind((id: string) => {
   const price$ = concat([initialOrder.price], priceChange$(id))
   const currency$ = concat([initialOrder.currency], currencyChange$(id))
 
-  const rate$ = currency$.pipe(switchMap((ccy) => currencyRate$(ccy)))
+  const rate$ = currency$.pipe(switchMap((ccy) => acceptedCurrencyRates$(ccy)))
   const baseCurrencyPrice$ = combineLatest([price$, rate$]).pipe(
     map(([price, rate]) => getBaseCurrencyPrice(price, rate)),
   )
@@ -58,19 +149,26 @@ const [useTotal, total$] = bind(
   ),
 )
 
-total$.subscribe()
+merge(total$, combineKeys(currencies$, acceptedCurrencyRates$)).subscribe()
 
-const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
-  const rate = useCurrencyRate(currency)
+const CurrencyRateRow: React.FC<{ currency: string }> = ({ currency }) => {
+  const currencyRate = useCurrencyRate(currency)
   return (
     <tr key={currency}>
       <td>{formatCurrency(currency)}</td>
       <td>
         <NumberInput
-          value={rate}
+          value={currencyRate.value}
           onChange={(value) => {
             onRateChange(currency, value)
           }}
+          style={{
+            backgroundColor:
+              currencyRate.state === CurrencyRateState.ACCEPTED
+                ? "limegreen"
+                : undefined,
+          }}
+          disabled={currencyRate.state === CurrencyRateState.IN_PROGRESS}
         />
       </td>
     </tr>
@@ -82,7 +180,7 @@ const Currencies = () => {
   return (
     <Table columns={["Currency", "Exchange rate"]}>
       {currencies.map((currency) => (
-        <CurrencyRate key={currency} currency={currency} />
+        <CurrencyRateRow key={currency} currency={currency} />
       ))}
     </Table>
   )
@@ -109,7 +207,7 @@ const CurrencySelector: React.FC<{
   )
 }
 
-const Orderline: React.FC<{ id: string }> = ({ id }) => {
+const Orderline: React.FC<{ id: string }> = memo(({ id }) => {
   const order = useOrder(id)
   return (
     <tr>
@@ -130,10 +228,10 @@ const Orderline: React.FC<{ id: string }> = ({ id }) => {
           }}
         />
       </td>
-      <td>{formatPrice(order.baseCurrencyPrice)} £</td>
+      <td>{formatPrice(order.baseCurrencyPrice)}£</td>
     </tr>
   )
-}
+})
 
 const Orders = () => {
   const orderIds = useOrderIds()
@@ -148,7 +246,7 @@ const Orders = () => {
 
 const OrderTotal = () => {
   const total = useTotal()
-  return <div className="total">{formatPrice(total)} £</div>
+  return <div className="total">{formatPrice(total)}£</div>
 }
 
 const App = () => (

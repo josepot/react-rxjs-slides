@@ -1,4 +1,4 @@
-import { bind, Subscribe } from "@react-rxjs/core"
+import { bind } from "@react-rxjs/core"
 import { combineKeys, createKeyedSignal, createSignal } from "@react-rxjs/utils"
 import { combineLatest, concat, EMPTY, pipe } from "rxjs"
 import { map, pluck, scan, switchMap } from "rxjs/operators"
@@ -57,6 +57,8 @@ const [useTotal, total$] = bind(
     map((prices) => Array.from(prices.values()).reduce((a, b) => a + b, 0)),
   ),
 )
+
+total$.subscribe()
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
   const rate = useCurrencyRate(currency)
@@ -150,18 +152,16 @@ const OrderTotal = () => {
 }
 
 const App = () => (
-  <Subscribe source$={total$}>
-    <div className="App">
-      <h1>Orders</h1>
-      <Orders />
-      <div className="actions">
-        <button onClick={onAddOrder}>Add</button>
-        <OrderTotal />
-      </div>
-      <h1>Exchange rates</h1>
-      <Currencies />
+  <div className="App">
+    <h1>Orders</h1>
+    <Orders />
+    <div className="actions">
+      <button onClick={onAddOrder}>Add</button>
+      <OrderTotal />
     </div>
-  </Subscribe>
+    <h1>Exchange rates</h1>
+    <Currencies />
+  </div>
 )
 
 export default App

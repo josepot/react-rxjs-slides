@@ -1,4 +1,4 @@
-import { bind, Subscribe } from "@react-rxjs/core"
+import { bind } from "@react-rxjs/core"
 import { combineKeys, createKeyedSignal, createSignal } from "@react-rxjs/utils"
 import { combineLatest, concat, EMPTY, pipe } from "rxjs"
 import { map, pluck, scan, switchMap } from "rxjs/operators"
@@ -57,6 +57,8 @@ const [useTotal, total$] = bind(
     map((prices) => Array.from(prices.values()).reduce((a, b) => a + b, 0)),
   ),
 )
+
+total$.subscribe()
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
   const rate = useCurrencyRate(currency)
@@ -138,9 +140,7 @@ const Orders = () => {
   return (
     <Table columns={["Article", "Price", "Currency", "Price in £"]}>
       {orderIds.map((id) => (
-        <Subscribe key={id} source$={order$(id)}>
-          <Orderline id={id} />
-        </Subscribe>
+        <Orderline key={id} id={id} />
       ))}
     </Table>
   )

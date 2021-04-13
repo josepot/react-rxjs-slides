@@ -536,11 +536,11 @@ Anyways, this does the trick.
 
 ---
 
-# Tree view vs Graph state
+## View tree vs State Graph
 
 ---
 
-# Solving the same problem with React-RxJS
+## Solving the same problem with React-RxJS
 
 ---
 
@@ -776,14 +776,14 @@ Later we will see that there is a more
 convenient way of accomplishing the same.
 ```
 
-```jsx 103,107:109 file="./codeblocks/react-rxjs/04_2orderLinePriceCurrency.tsx"
+```jsx 105,108:110 file="./codeblocks/react-rxjs/04_2orderLinePriceCurrency.tsx"
 ```
 
 ```notes
 moving on into the Orderline component...
 ```
 
-```diff 87:100
+```diff 89:102
 ```
 
 ```notes
@@ -801,7 +801,7 @@ Nice!
 Time to wire up the baseCurrencyPrice...
 ```
 
-```jsx 87,88,95:97,103:105 file="./codeblocks/react-rxjs/04_3orderLinePriceCurrency.tsx"
+```jsx 89,90,97:99,105:107 file="./codeblocks/react-rxjs/04_3orderLinePriceCurrency.tsx"
 ```
 
 ```notes
@@ -849,7 +849,7 @@ we replace the hardcoded value with
 the new property and done!
 ```
 
-```diff 116
+```diff 118
 ```
 
 ```notes
@@ -863,7 +863,7 @@ that's not being used, nothing else
 get's re-rendered.
 ```
 
-```jsx 116 file="./codeblocks/react-rxjs/05_2orderLineBaseCurrency.tsx"
+```jsx 118 file="./codeblocks/react-rxjs/05_2orderLineBaseCurrency.tsx"
 ```
 
 ```notes checkout:react-rxjs/6
@@ -975,7 +975,7 @@ using inside the Orders component.
 Let's finish this...
 ```
 
-```jsx 27,55:58 file="./codeblocks/react-rxjs/07_1Total.tsx"
+```jsx 27,55:59 file="./codeblocks/react-rxjs/07_1Total.tsx"
 ```
 
 ```notes
@@ -986,36 +986,6 @@ Here let's use the `useTotal` hook.
 ```
 
 ```jsx 150 file="./codeblocks/react-rxjs/07_2Total.tsx"
-```
-
-```notes
-Then let's use the Subscribe component
-in the root component.
-```
-
-```diff 155,164
-```
-
-```notes
-This would be the equivalent to our
-provider.
-```
-
-```jsx 155,166 file="./codeblocks/react-rxjs/07_3Total.tsx"
-```
-
-```notes
-now we won't be neededing this Subscribe
-anymore, so let's remove it.
-
-And we are done, everything should be working
-perfectly fine.
-```
-
-```diff 141:143
-```
-
-```jsx 141 file="./codeblocks/react-rxjs/07_4Total.tsx"
 ```
 
 ```notes
@@ -1034,14 +1004,14 @@ Let's see... perfect!
 Now let's have a quick perf comparisson.
 ```
 
-```diff 110
+```diff 112
 ```
 
 ```notes checkout:react-rxjs/8
 perf
 ```
 
-```jsx 111 file="./codeblocks/react-rxjs/08_perf.tsx"
+```jsx 113 file="./codeblocks/react-rxjs/08_perf.tsx"
 ```
 
 </NotesCodeSurfer>
@@ -1147,3 +1117,38 @@ perf
 </Step>
 
 </CodeSurferColumns>
+
+---
+
+## Performance comparisson
+---
+
+<NotesCodeSurfer>
+
+```jsx 21:24 file="./codeblocks/react-rxjs/08_perf.tsx"
+```
+
+```jsx 45:62 file="./codeblocks/react-rxjs/09_1delay-ccy-rates.tsx"
+```
+
+```diff 82
+```
+
+```jsx 64:71,91 file="./codeblocks/react-rxjs/09_2delay-ccy-rates.tsx"
+```
+
+```diff 57
+```
+
+```jsx 57:68 file="./codeblocks/react-rxjs/09_3delay-ccy-rates.tsx"
+```
+
+```jsx 69:83 file="./codeblocks/react-rxjs/09_4delay-ccy-rates.tsx"
+```
+
+```jsx 85:93 file="./codeblocks/react-rxjs/09_5delay-ccy-rates.tsx"
+```
+
+```jsx 95:98 file="./codeblocks/react-rxjs/09_6delay-ccy-rates.tsx"
+```
+</NotesCodeSurfer>

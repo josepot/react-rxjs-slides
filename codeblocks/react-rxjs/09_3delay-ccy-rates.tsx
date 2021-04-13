@@ -1,7 +1,30 @@
 import { bind } from "@react-rxjs/core"
 import { combineKeys, createKeyedSignal, createSignal } from "@react-rxjs/utils"
-import { combineLatest, concat, EMPTY, pipe } from "rxjs"
-import { map, pluck, scan, switchMap } from "rxjs/operators"
+import { memo } from "react"
+import {
+  combineLatest,
+  concat,
+  defer,
+  EMPTY,
+  merge,
+  Observable,
+  pipe,
+  timer,
+} from "rxjs"
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  mapTo,
+  mergeMap,
+  pluck,
+  repeat,
+  scan,
+  switchMap,
+  take,
+  takeWhile,
+  withLatestFrom,
+} from "rxjs/operators"
 import {
   initialCurrencyRates,
   formatCurrency,
@@ -12,14 +35,50 @@ import {
   getBaseCurrencyPrice,
   uuidv4,
   getRandomOrder,
+  isCurrecyRateValid,
 } from "./utils"
 
 const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
 
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
+
+enum CurrencyRateState {
+  ACCEPTED,
+  DIRTY,
+  IN_PROGRESS,
+}
+
+interface CurrencyRate {
+  value: number
+  state: CurrencyRateState
+}
+
 const [useCurrencyRate, currencyRate$] = bind(
-  rateChange$,
-  (currency) => initialCurrencyRates[currency],
+  (currency: string): Observable<CurrencyRate> => {
+    const latestAcceptedValue$ = acceptedCurrencyRates$(currency).pipe(take(1))
+
+    const getNextAcceptedValue$ = (candidateValue: number) =>
+      defer(() => isCurrecyRateValid(currency, candidateValue)).pipe(
+        mergeMap((isOk) => (isOk ? [candidateValue] : latestAcceptedValue$)),
+        map((value) => ({
+          value,
+          state: CurrencyRateState.ACCEPTED,
+        })),
+      )
+  },
+  (currency) => ({
+    state: CurrencyRateState.ACCEPTED,
+    value: initialCurrencyRates[currency],
+  }),
+)
+
+const [, acceptedCurrencyRates$] = bind(
+  pipe(
+    currencyRate$,
+    filter(({ state }) => state === CurrencyRateState.ACCEPTED),
+    pluck("value"),
+    distinctUntilChanged(),
+  ),
 )
 
 const initialOrderIds = Object.keys(initialOrders)
@@ -40,7 +99,7 @@ const [useOrder, order$] = bind((id: string) => {
   const price$ = concat([initialOrder.price], priceChange$(id))
   const currency$ = concat([initialOrder.currency], currencyChange$(id))
 
-  const rate$ = currency$.pipe(switchMap((ccy) => currencyRate$(ccy)))
+  const rate$ = currency$.pipe(switchMap((ccy) => acceptedCurrencyRates$(ccy)))
   const baseCurrencyPrice$ = combineLatest([price$, rate$]).pipe(
     map(([price, rate]) => getBaseCurrencyPrice(price, rate)),
   )
@@ -109,7 +168,7 @@ const CurrencySelector: React.FC<{
   )
 }
 
-const Orderline: React.FC<{ id: string }> = ({ id }) => {
+const Orderline: React.FC<{ id: string }> = memo(({ id }) => {
   const order = useOrder(id)
   return (
     <tr>
@@ -133,7 +192,7 @@ const Orderline: React.FC<{ id: string }> = ({ id }) => {
       <td>{formatPrice(order.baseCurrencyPrice)} £</td>
     </tr>
   )
-}
+})
 
 const Orders = () => {
   const orderIds = useOrderIds()

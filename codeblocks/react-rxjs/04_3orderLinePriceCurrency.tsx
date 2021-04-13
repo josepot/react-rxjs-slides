@@ -1,5 +1,5 @@
-import { bind, Subscribe } from "@react-rxjs/core"
-import { createKeyedSignal } from "@react-rxjs/utils"
+import { bind } from "@react-rxjs/core"
+import { createKeyedSignal, combineKeys } from "@react-rxjs/utils"
 import { combineLatest, concat, EMPTY } from "rxjs"
 import { map } from "rxjs/operators"
 import {
@@ -20,7 +20,7 @@ const [useCurrencyRate] = bind(
 )
 
 const initialOrderIds = Object.keys(initialOrders)
-const [useOrderIds] = bind(EMPTY, initialOrderIds)
+const [useOrderIds, orderIds$] = bind(EMPTY, initialOrderIds)
 
 const [priceChange$, onPriceChange] = createKeyedSignal<string, number>()
 const [currencyChange$, onCurrencyChange] = createKeyedSignal<string, string>()
@@ -34,6 +34,8 @@ const [useOrder, order$] = bind((id: string) => {
     map((update) => ({ ...initialOrder, ...update })),
   )
 })
+
+combineKeys(orderIds$, order$).subscribe()
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
   const rate = useCurrencyRate(currency)
@@ -115,9 +117,7 @@ const Orders = () => {
   return (
     <Table columns={["Article", "Price", "Currency", "Price in £"]}>
       {orderIds.map((id) => (
-        <Subscribe key={id} source$={order$(id)}>
-          <Orderline id={id} />
-        </Subscribe>
+        <Orderline key={id} id={id} />
       ))}
     </Table>
   )
