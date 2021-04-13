@@ -551,7 +551,7 @@ The starting point is the same as before.
 
 And the first thing that we 
 did was to put the currencies
-in context.
+in context, right?
 ```
 
 ```jsx 86:97 file="./codeblocks/react-rxjs/01_startingpoint.tsx"
@@ -562,39 +562,58 @@ With React-RxJS we can use
 bind for accomplishing the
 same thing.
 
-`bind` is the core of React-RxJS.
-This is how it works:
-- We pass an observalbe to it
-- And optionally an initial value,
-this initial value will only
-be used if the observable
-hasn't emitted anything yet.
+Bind is the secrete sauce of
+React-RxJS. So, let me explain
+what bind does:
 
-and it returns a tuple with:
-- A react-hook and
-- The underlying observable that
-the hook is going to use. This,
-observable is multicasted and
-it replays the latest emitted value.
-It's very similar to `shareReplay(1)`,
-but it doesn't create memory-leaks,
+Bind is a function that takes
+at least one argument:
+
+- The observable that will be emitting
+the values that we want to use inside
+react.
+
+- The second argument, which is optional,
+it's the default value that will
+be used until the observable emits.
+
+Then bind returns a tuple with 2
+different things:
+
+- A react-hook
+- A shared and replayable version
+of the input observable. In other
+words, the improved version of the
+input observable that the hook
+is going to be using behind the
+scenes.
+
+It's very similar to applying a 
+`shareReplay(1)` to the input observable,
+but with the difference
+that it doesn't create memory-leaks.
 because when all it's subscribers
 unsubscribe from it, it clears
 its state and it unsubscribes from
 its source.
 
-Using `bind` here could look like
+Using `bind` here may look like
 an overkill, but it has 2 advantages
-over using context:
-- It's a lot easier to setup.
-- If in the future the currencies
-is a dynamic value, we can just
-replace `EMPTY` with the stream
-of currencies without changing
-anything else.
+over using react-context:
+
+1) It's a lot easier to setup.
+2) If in the future the currencies
+is become a dynamic value, we can
+replace the `EMPTY` stream with the
+observable of active currencies without
+having to change anything else.
 ```
 
 ```jsx 13 file="./codeblocks/react-rxjs/02_1useCurrencies.tsx"
+```
+
+```notes
+Ok, so let's use the useCurrencies hook.
 ```
 
 ```diff 28
@@ -602,6 +621,10 @@ anything else.
 
 ```jsx 28 file="./codeblocks/react-rxjs/02_2useCurrencies.tsx"
 ```
+
+```notes
+Same...
+``
 
 ```diff 42
 ```
@@ -620,41 +643,60 @@ The first line that's highlited uses
 the util `createKeyedSignal` to create
 a "signal" for each currency.
 
-What this does is like creating
+In the context of React-RxJS we use
+the term signal for refering to external
+events.
+
+Every time that we create a signal,
+we want to have an observable for listening
+to those events, and an event emitter
+for emitting events.
+
+Sometimes, though, we want to partition
+the signals, so that each instance has
+their own signal. That's what `createKeyedSignal`
+does:
+
+it returns a function for accessing
+the observable of each instance, and an
+event emitter where the first argument
+is going to be the key of each instance
+and the second argument is going to be
+the value of the observable.
+
+Using RxJS terminology is like creating
 a subject per each currency, while
 also separating the Observable and
 the Observer.
 
-In other words: `onRateChange` is
-a void function that receives 2
-arguments: a currency, which is
-the key, and a number: which is
-the payload.
+It sound a lot more complicated than
+it actually is.
 
-We can use this function to
-emit values through the observalbe.
+In this case `onRateChange` is
+an event emitter that receives 2
+arguments: the currency (which is the key),
+and the number, which is the payload.
 
-- `rateChange$`, on the other hand,
-is a function that receives the
-currency as an argument and it returns
-the observable of numbers for that
-currency.
+Then `rateChange$`, is a function that
+receives the currency as an argument
+and it returns an observable of numbers
+for that currency.
 
 The nice thing about bind is that
-we can also use it with with what
-we call parametric observables,
+we can also use it with with
+functions that return observables
 like `rageChange$`.
 
-Let's put this to use.
+Let's wire this up...
 ```
 
 ```jsx 15:19 file="./codeblocks/react-rxjs/03_1exchangeCurrencies.tsx"
 ```
 
 ```notes
-Let's replace rate with our hook
-and add pass the `onRateChange`
-handler to the `onChange` of `NumberInput`
+Now let's replace rate with our hook
+and plug the `onRateChange` event-emitter
+into the `onChange` of `NumberInput`
 ```
 
 ```diff 21:31
@@ -675,12 +717,15 @@ Now, let's wire up the Orders:
 
 ```notes checkout:react-rxjs/4
 First we create a hook for accessing
-the ids of the orders. We use the same
-trick that we used for wiring up the
-currencies, so that when the orders
-start changing, we can just replace
-the EMPTY stream with the Observable
-of orderIds.
+the ids of the orders.
+
+We are using the same trick that we
+used for wiring up the currencies.
+
+Then latter, when we implement
+the functionality for adding orders,
+we will replace this EMPTY stream
+with on observable of orderIds.
 
 Next we create a keyed signal
 for the priceChange and another one
@@ -690,7 +735,7 @@ and finally we use bind for creating
 the observable of each order.
 
 I love the fact that on RxJS 7 we can
-pass Objects of streams to `combineLatest`.
+pass Objects of streams to `combineLatest`!
 
 Notice that this time we are not
 using a default value with `bind`. The
@@ -699,7 +744,8 @@ value to bind is that we have to make
 sure that we are subscribed to the
 underlying observable before render.
 
-You will see what that means in just a sec.
+There are many different ways of accomplishing
+that, as we will see in just a moment.
 ```
 
 ```jsx 22:36 file="./codeblocks/react-rxjs/04_1orderLinePriceCurrency.tsx"
@@ -722,7 +768,7 @@ that the subscription to the underlying
 stream exists before the Orderline component
 renders.
 
-This is only necessary b/c the
+Remember, this is only necessary b/c the
 `useOrder` hook was created with a bind
 that didn't have a default value.
 
@@ -807,9 +853,9 @@ the new property and done!
 ```
 
 ```notes
-and we are done. let's try it out!
+let's try it out!
 
-Notice that we never get re-renders
+Notice that it never get re-renders
 for unrelated things.
 
 If we change the price of a currency
@@ -820,30 +866,120 @@ get's re-rendered.
 ```jsx 116 file="./codeblocks/react-rxjs/05_2orderLineBaseCurrency.tsx"
 ```
 
+```notes checkout:react-rxjs/6
+Now let's make sure that we can add new
+orders.
+
+Remember how we said that we would be
+using an EMPTY stream until we implemented
+this functionality?
+
+Well, now let's replace that stream
+with a stream that emits a list
+with a new ID every time that the
+user clicks the add button.
+```
+
 ```diff 24
 ```
 
-```notes checkout:react-rxjs/6
-Add order
+```notes
+For doing that we will create a signal.
+Not a keyed-signal, but a signal.
+
+This is really just a way of separating
+the Observable from the observer of the
+underlying Subject.
+
+And then every time that the addOrder$
+stream emits, we map that to a new ID
+and the we scan it to add that ID
+to the latest list of ids.
+
+Also, we need to make sure that the
+initialOrder that's defined insde
+the order$ stream, gets a random-order
+if the id is not one of the initial ones.
 ```
 
 ```jsx 25:33,39 file="./codeblocks/react-rxjs/06_1addOrder.tsx"
 ```
 
+```notes
+Now lets wire up the button with the
+onAddOrder emitter that we got when
+we created the signal and that's it.
+```
+
 ```diff 153
 ```
 
+```notes
+notice that this time we don't have
+to create a new component for the AddButton.
+
+Let's make sure that this works...
+```
+
 ```jsx 153 file="./codeblocks/react-rxjs/06_2addOrder.tsx"
+```
+
+```notes
+The last thing that we have to do
+wire up is the total-base-ccy-price.
+
+We need to take every base-currency-price
+from each order and add it.
+
+In other words, we new to somehow
+combine the stream of orderIds
+with each stream of orders.
+
+React-RxJS/utils provides a handy
+helper for that named `combineKeys`
 ```
 
 ```diff 27,51
 ```
 
 ```notes checkout:react-rxjs/7
-Total
+`combineKeys` takes a stream of ids as
+the first argument, and a factory of
+streams as the second argument and returns
+a stream that emmits a Map of values
+every time that one of the values of the Map
+changes, or any time that entries of the
+map changes.
+
+So, we combine the stream of orderIds$
+with the stream of baseCurrencyPrices,
+and then we add those values together.
+
+Also, notice how again we are using `bind`
+without providing a default value.
+
+Meaning that we have to make sure that
+we are subscribed to the total$ stream
+before the component that it's going
+to render the total gets rendered.
+
+Again, there are different ways of doing
+that, but the most straightforward
+is to use Subscribe. Also, since
+the total$ stream already subscribes
+itself to all the order$ streams,
+we will be able to get rid of the
+previous Subscribe that we were
+using inside the Orders component.
+
+Let's finish this...
 ```
 
 ```jsx 27,55:58 file="./codeblocks/react-rxjs/07_1Total.tsx"
+```
+
+```notes
+Here let's use the `useTotal` hook.
 ```
 
 ```diff 149:152
@@ -852,13 +988,50 @@ Total
 ```jsx 150 file="./codeblocks/react-rxjs/07_2Total.tsx"
 ```
 
+```notes
+Then let's use the Subscribe component
+in the root component.
+```
+
+```diff 155,164
+```
+
+```notes
+This would be the equivalent to our
+provider.
+```
+
 ```jsx 155,166 file="./codeblocks/react-rxjs/07_3Total.tsx"
+```
+
+```notes
+now we won't be neededing this Subscribe
+anymore, so let's remove it.
+
+And we are done, everything should be working
+perfectly fine.
 ```
 
 ```diff 141:143
 ```
 
 ```jsx 141 file="./codeblocks/react-rxjs/07_4Total.tsx"
+```
+
+```notes
+One last thing, though, we can see how
+only those components that need to rerender
+get re-rendered... Except when we add a new
+order, that all the orders get re-rendered,
+let's make sure that doesn't happen:
+```
+
+```notes
+using `memo` here should do it.
+
+Let's see... perfect!
+
+Now let's have a quick perf comparisson.
 ```
 
 ```diff 110
