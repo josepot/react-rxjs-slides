@@ -1,3 +1,4 @@
+import { Appear } from "mdx-deck"
 import {
   CodeSurfer,
   CodeSurferColumns,
@@ -5,12 +6,48 @@ import {
 } from "code-surfer";
 import { github, vsDark } from "@code-surfer/themes";
 import NotesCodeSurfer from "./src/NotesCodeSurfer";
+import Image from './src/Image.jsx';
+import Waver from './src/Waver.jsx';
 
 export const theme = vsDark;
 
-# Hello 👋
+<Image
+  src="https://raw.githubusercontent.com/re-rxjs/react-rxjs/main/assets/logo-256.png"
+  width="200px"
+  height="200px"
+/>
 
-You are using [MDX Deck](https://github.com/jxnblk/mdx-deck) and [Code Surfer](https://codesurfer.pomb.us)
+# React-RxJS
+
+Bringing Reactivity to React
+
+---
+
+## What this talk is about
+
+---
+
+## <Waver /> &nbsp; I’m Josep M Sobrepere
+
+<Appear>
+
+Front End Architect @ **Adaptive Financial Consuting**
+
+Creator @ **React-RxJS**
+
+Creator @ **Redux-Views**
+
+OSS Contributor @ **RxJS, React-Redux, React-Router...**
+
+<p style={{fontSize: '0.8em', marginTop: '10rem'}}>
+@joseptec
+</p>
+
+</Appear>
+
+---
+
+## The problem
 
 ---
 
@@ -224,7 +261,7 @@ that we can place in the already
 existing Currencies Provider.
 ```
 
-```jsx 19:23,29,31 file="./codeblocks/react/05_1liftCurrencyRates.tsx"
+```jsx 19:23,26,29,31 file="./codeblocks/react/05_1liftCurrencyRates.tsx"
 ```
 
 ```notes
@@ -1121,6 +1158,13 @@ perf
 ---
 
 ## Performance comparisson
+
+---
+## New requirement:
+
+### Async currency rates validation
+---
+### React-RxJs implementation
 ---
 
 <NotesCodeSurfer>
@@ -1128,27 +1172,121 @@ perf
 ```jsx 21:24 file="./codeblocks/react-rxjs/08_perf.tsx"
 ```
 
-```jsx 45:62 file="./codeblocks/react-rxjs/09_1delay-ccy-rates.tsx"
+```jsx 52:69 file="./codeblocks/react-rxjs/09_0delay-ccy-rates.tsx"
 ```
 
-```diff 82
+```diff 109:124
 ```
 
-```jsx 64:71,91 file="./codeblocks/react-rxjs/09_2delay-ccy-rates.tsx"
+```jsx 109:131 file="./codeblocks/react-rxjs/09_1delay-ccy-rates.tsx"
 ```
 
-```diff 57
+```diff 89
 ```
 
-```jsx 57:68 file="./codeblocks/react-rxjs/09_3delay-ccy-rates.tsx"
+```jsx 71:78,98 file="./codeblocks/react-rxjs/09_2delay-ccy-rates.tsx"
 ```
 
-```jsx 69:83 file="./codeblocks/react-rxjs/09_4delay-ccy-rates.tsx"
+```diff 64
 ```
 
-```jsx 85:93 file="./codeblocks/react-rxjs/09_5delay-ccy-rates.tsx"
+```jsx 64:76 file="./codeblocks/react-rxjs/09_3delay-ccy-rates.tsx"
 ```
 
-```jsx 95:98 file="./codeblocks/react-rxjs/09_6delay-ccy-rates.tsx"
+```jsx 77:79 file="./codeblocks/react-rxjs/09_4delay-ccy-rates.tsx"
 ```
+
+```jsx 79:87 file="./codeblocks/react-rxjs/09_5delay-ccy-rates.tsx"
+```
+
+```jsx 88:96 file="./codeblocks/react-rxjs/09_6delay-ccy-rates.tsx"
+```
+
+```notes checkout:react-rxjs/9
+asdf
+```
+
+```jsx 97 file="./codeblocks/react-rxjs/09_7delay-ccy-rates.tsx"
+```
+
+```diff 78:87
+```
+
+```diff 88:96
+```
+
+```diff 78:96
+```
+
+```jsx 77:109 file="./codeblocks/react-rxjs/09_8delay-ccy-rates.tsx"
+```
+
+```diff 105:109
+```
+
 </NotesCodeSurfer>
+
+---
+### React implementation
+---
+
+<NotesCodeSurfer>
+
+```jsx 97:115 file="./codeblocks/react/10_calculateTotal.tsx"
+```
+
+```notes checkout:react-local-state/12
+asdf
+```
+
+```jsx 110:139 file="./codeblocks/react/11_delay-currency-rate.tsx"
+````
+
+</NotesCodeSurfer>
+
+---
+
+## Last requirement:
+
+### Cancellation
+
+---
+
+<NotesCodeSurfer>
+
+```jsx 50:64 file="./codeblocks/react-rxjs/09_8delay-ccy-rates.tsx"
+```
+
+```notes checkout:react-rxjs/10
+asdf
+```
+
+```jsx 53,72,73 file="./codeblocks/react-rxjs/10_cancelation.tsx"
+```
+
+```diff 174:178
+```
+
+</NotesCodeSurfer>
+
+---
+### React implementation
+---
+
+<NotesCodeSurfer>
+
+```jsx 110:139 file="./codeblocks/react/11_delay-currency-rate.tsx"
+````
+
+```notes checkout:react-local-state/14
+asdf
+```
+
+```jsx 112,120:125,147 file="./codeblocks/react/12_cancelation.tsx"
+```
+
+```diff 154:159
+```
+
+</NotesCodeSurfer>
+

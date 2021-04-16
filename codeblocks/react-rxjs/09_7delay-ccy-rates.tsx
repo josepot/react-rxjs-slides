@@ -94,6 +94,7 @@ const [useCurrencyRate, currencyRate$] = bind(
           ),
         ),
       ),
+      repeat(),
     )
   },
   (currency) => ({

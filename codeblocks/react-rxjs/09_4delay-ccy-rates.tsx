@@ -8,20 +8,24 @@ import {
   EMPTY,
   merge,
   Observable,
+  of,
+  OperatorFunction,
   pipe,
-  timer,
 } from "rxjs"
 import {
+  connect,
+  delay,
   distinctUntilChanged,
   filter,
   map,
-  mapTo,
   mergeMap,
   pluck,
   repeat,
   scan,
+  startWith,
   switchMap,
   take,
+  takeLast,
   takeWhile,
   withLatestFrom,
 } from "rxjs/operators"
@@ -38,7 +42,10 @@ import {
   isCurrecyRateValid,
 } from "./utils"
 
-const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
+const [useCurrencies, currencies$] = bind(
+  EMPTY,
+  Object.keys(initialCurrencyRates),
+)
 
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
 
@@ -57,30 +64,19 @@ const [useCurrencyRate, currencyRate$] = bind(
   (currency: string): Observable<CurrencyRate> => {
     const latestAcceptedValue$ = acceptedCurrencyRates$(currency).pipe(take(1))
 
-    const getNextAcceptedValue$ = (candidateValue: number) =>
-      defer(() => isCurrecyRateValid(currency, candidateValue)).pipe(
-        mergeMap((isOk) => (isOk ? [candidateValue] : latestAcceptedValue$)),
+    const getNextAcceptedValue$ = (candidate: number) =>
+      defer(() => isCurrecyRateValid(currency, candidate)).pipe(
+        mergeMap((isOk) => (isOk ? of(candidate) : latestAcceptedValue$)),
         map((value) => ({
           value,
           state: CurrencyRateState.ACCEPTED,
         })),
+        startWith({ value: candidate, state: CurrencyRateState.IN_PROGRESS }),
       )
 
-    const delayServerValidation = () =>
-      pipe(
-        withLatestFrom(latestAcceptedValue$),
-        switchMap(([value, latestAccepted]) =>
-          value === latestAccepted
-            ? [{ value, state: CurrencyRateState.ACCEPTED }]
-            : concat(
-                [{ value, state: CurrencyRateState.DIRTY }],
-                timer(500).pipe(
-                  mapTo({ value, state: CurrencyRateState.IN_PROGRESS }),
-                ),
-              ),
-        ),
-        takeWhile(({ state }) => state !== CurrencyRateState.IN_PROGRESS, true),
-      )
+    return rateChange$(currency).pipe(
+      withLatestFrom(latestAcceptedValue$),
+    )
   },
   (currency) => ({
     state: CurrencyRateState.ACCEPTED,

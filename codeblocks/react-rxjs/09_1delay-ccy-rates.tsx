@@ -8,20 +8,24 @@ import {
   EMPTY,
   merge,
   Observable,
+  of,
+  OperatorFunction,
   pipe,
-  timer,
 } from "rxjs"
 import {
+  connect,
+  delay,
   distinctUntilChanged,
   filter,
   map,
-  mapTo,
   mergeMap,
   pluck,
   repeat,
   scan,
+  startWith,
   switchMap,
   take,
+  takeLast,
   takeWhile,
   withLatestFrom,
 } from "rxjs/operators"
@@ -38,7 +42,10 @@ import {
   isCurrecyRateValid,
 } from "./utils"
 
-const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
+const [useCurrencies, currencies$] = bind(
+  EMPTY,
+  Object.keys(initialCurrencyRates),
+)
 
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
 
@@ -99,17 +106,24 @@ const [useTotal, total$] = bind(
 
 total$.subscribe()
 
-const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
-  const rate = useCurrencyRate(currency)
+const CurrencyRateRow: React.FC<{ currency: string }> = ({ currency }) => {
+  const currencyRate = useCurrencyRate(currency)
   return (
     <tr key={currency}>
       <td>{formatCurrency(currency)}</td>
       <td>
         <NumberInput
-          value={rate}
+          value={currencyRate.value}
           onChange={(value) => {
             onRateChange(currency, value)
           }}
+          style={{
+            backgroundColor:
+              currencyRate.state === CurrencyRateState.ACCEPTED
+                ? "limegreen"
+                : undefined,
+          }}
+          disabled={currencyRate.state === CurrencyRateState.IN_PROGRESS}
         />
       </td>
     </tr>

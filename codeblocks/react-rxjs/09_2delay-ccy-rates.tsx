@@ -8,20 +8,24 @@ import {
   EMPTY,
   merge,
   Observable,
+  of,
+  OperatorFunction,
   pipe,
-  timer,
 } from "rxjs"
 import {
+  connect,
+  delay,
   distinctUntilChanged,
   filter,
   map,
-  mapTo,
   mergeMap,
   pluck,
   repeat,
   scan,
+  startWith,
   switchMap,
   take,
+  takeLast,
   takeWhile,
   withLatestFrom,
 } from "rxjs/operators"
@@ -38,7 +42,10 @@ import {
   isCurrecyRateValid,
 } from "./utils"
 
-const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
+const [useCurrencies, currencies$] = bind(
+  EMPTY,
+  Object.keys(initialCurrencyRates),
+)
 
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
 
