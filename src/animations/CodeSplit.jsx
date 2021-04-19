@@ -5,6 +5,8 @@ export default function CodeSplit() {
   const ref = useSteppedSvg([
     615, // index_timing
     500, // index_compress
+    2400, // main_timing
+    500
   ]);
 
   return (
@@ -22,13 +24,62 @@ export default function CodeSplit() {
             attributeName="transform"
             type="translate"
             from="0 0"
-            to="-100 -100"
+            to="-130 -90"
             begin="index_compress.begin"
             dur="500ms"
             fill="freeze"
           />
         }
       />
+      <Arrow transform="translate(163, 200)" opacity={0} height={30} width={20}>
+        <animate
+          attributeName="opacity"
+          to="1"
+          dur="0.2s"
+          fill="freeze"
+          begin="index_compress.end"
+        />
+        <animateTransform
+          additive="sum"
+          attributeName="transform"
+          type="translate"
+          from="0 -5"
+          to="0 0"
+          begin="index_compress.end"
+          dur="0.2s"
+          fill="freeze"
+        />
+      </Arrow>
+      <MainBox
+        transform="translate(182, 190)"
+      />
+      <Arrow transform="translate(897, 280)" opacity={0} height={50} width={70}>
+        <animate
+          attributeName="opacity"
+          to="1"
+          dur="0.2s"
+          fill="freeze"
+          begin="main_timing.end"
+        />
+      </Arrow>
+      <Arrow transform="translate(897, 330)" opacity={0} height={50} width={70}>
+        <animate
+          attributeName="opacity"
+          to="1"
+          dur="0.2s"
+          fill="freeze"
+          begin="main_timing.end"
+        />
+      </Arrow>
+      <Arrow transform="translate(897, 380)" opacity={0} height={50} width={70}>
+        <animate
+          attributeName="opacity"
+          to="1"
+          dur="0.2s"
+          fill="freeze"
+          begin="main_timing.end"
+        />
+      </Arrow>
     </svg>
   );
 }
@@ -69,7 +120,7 @@ const IndexBox = ({ animation, ...props }) => {
         fill="white"
         style={{ visibility: "hidden" }}
       >
-        index.html
+        index.html ~615ms
         <animate
           id="index_appear"
           begin="10ms"
@@ -117,6 +168,69 @@ const IndexBox = ({ animation, ...props }) => {
   );
 };
 
+const MainBox = ({ animation, ...props }) => {
+  const boxSizes = [95, 210, 410];
+  const totalWidth = boxSizes.reduce((a, b) => a + b);
+
+  return (
+    <g {...props}>
+      <mask id="main_reveal">
+        <rect
+          x="0"
+          y="0"
+          width="0"
+          height="100"
+          fill="white"
+        >
+          <animate
+            id="main_timing"
+            attributeName="width"
+            to={totalWidth}
+            dur="2400ms"
+            fill="freeze"
+            begin="index_compress.end"
+          />
+        </rect>
+      </mask>
+      <text
+        x="0"
+        y="30"
+        fill="white"
+        style={{ visibility: "hidden" }}
+      >
+        main.js ~2400ms
+        <animate
+          begin="main_timing.begin+10ms"
+          {...appearAnimation}
+        />
+      </text>
+      <g
+        mask="url(#main_reveal)"
+        transform="translate(0, 40)"
+      >
+        <DownloadBox
+          color="palegoldenrod"
+          text="315ms"
+          width={boxSizes[0]}
+        />
+        <DownloadBox
+          color="goldenrod"
+          text="700ms"
+          width={boxSizes[1]}
+          transform="translate(95)"
+        />
+        <DownloadBox
+          color="steelblue"
+          text="1370ms"
+          width={boxSizes[2]}
+          transform={`translate(${95 + 210})`}
+        />
+      </g>
+      {animation}
+    </g>
+  );
+};
+
 const DownloadBox = ({
   text,
   width,
@@ -147,6 +261,19 @@ const DownloadBox = ({
       ></rect>
       {textElement}
     </g>
+  );
+};
+
+const Arrow = ({width: w = 30, height: h = 40, ...props}) => {
+  return (
+    <path
+      d={`M0 0 0 ${h} ${w} ${h} ${w - 10} ${
+        h - 5
+      } M${w} ${h} ${w - 10} ${h + 5}`}
+      stroke="white"
+      fill="none"
+      {...props}
+    />
   );
 };
 
