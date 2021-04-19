@@ -24,7 +24,7 @@ const [useCurrencyRate, currencyRate$] = bind(
 
 const initialOrderIds = Object.keys(initialOrders)
 const [addOrder$, onAddOrder] = createSignal()
-const [useOrderIds, orderIds$] = bind(EMPTY, initialOrderIds)
+const [useOrderIds, orderIds$] = bind(
   addOrder$.pipe(
     map(uuidv4),
     scan((acc, id) => [...acc, id], initialOrderIds),

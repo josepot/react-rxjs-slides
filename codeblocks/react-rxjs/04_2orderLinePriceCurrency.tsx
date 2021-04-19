@@ -22,21 +22,6 @@ const [useCurrencyRate] = bind(
 const initialOrderIds = Object.keys(initialOrders)
 const [useOrderIds, orderIds] = bind(EMPTY, initialOrderIds)
 
-const [priceChange$, onPriceChange] = createKeyedSignal<string, number>()
-const [currencyChange$, onCurrencyChange] = createKeyedSignal<string, string>()
-
-const [useOrder, order$] = bind((id: string) => {
-  const initialOrder = initialOrders[id]
-  const price$ = concat([initialOrder.price], priceChange$(id))
-  const currency$ = concat([initialOrder.currency], currencyChange$(id))
-
-  return combineLatest({ price: price$, currency: currency$ }).pipe(
-    map((update) => ({ ...initialOrder, ...update })),
-  )
-})
-
-combineKeys(orderIds, order$).subscribe()
-
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
   const rate = useCurrencyRate(currency)
   return (

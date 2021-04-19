@@ -1,5 +1,5 @@
 import { bind } from "@react-rxjs/core"
-import { createKeyedSignal } from "@react-rxjs/utils"
+import { combineKeys, createKeyedSignal } from "@react-rxjs/utils"
 import { combineLatest, concat, EMPTY } from "rxjs"
 import { map } from "rxjs/operators"
 import {
@@ -20,7 +20,20 @@ const [useCurrencyRate] = bind(
 )
 
 const initialOrderIds = Object.keys(initialOrders)
-const [useOrderIds, orderIds$] = bind(EMPTY, initialOrderIds)
+const [useOrderIds, orderIds] = bind(EMPTY, initialOrderIds)
+
+const [priceChange$, onPriceChange] = createKeyedSignal<string, number>()
+const [currencyChange$, onCurrencyChange] = createKeyedSignal<string, string>()
+
+const [useOrder, order$] = bind((id: string) => {
+  const initialOrder = initialOrders[id]
+  const price$ = concat([initialOrder.price], priceChange$(id))
+  const currency$ = concat([initialOrder.currency], currencyChange$(id))
+
+  return combineLatest({ price: price$, currency: currency$ }).pipe(
+    map((update) => ({ ...initialOrder, ...update })),
+  )
+})
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
   const rate = useCurrencyRate(currency)
@@ -87,11 +100,11 @@ const Orderline: React.FC<Order> = (order) => {
 }
 
 const Orders = () => {
-  const orders = Object.values(initialOrders)
+  const orderIds = useOrderIds()
   return (
     <Table columns={["Article", "Price", "Currency", "Price in £"]}>
-      {orders.map((order) => (
-        <Orderline key={order.id} {...order} />
+      {orderIds.map((id) => (
+        <Orderline key={id} id={id} />
       ))}
     </Table>
   )

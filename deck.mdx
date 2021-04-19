@@ -785,14 +785,19 @@ There are many different ways of accomplishing
 that, as we will see in just a moment.
 ```
 
-```jsx 22:36 file="./codeblocks/react-rxjs/04_1orderLinePriceCurrency.tsx"
+```jsx 22:23 file="./codeblocks/react-rxjs/04_1orderLinePriceCurrency.tsx"
 ```
 
-```notes
-Let's wired up the Orders component.
+```diff 89:98
 ```
 
-```diff 102:111
+```jsx 90,93:95 file="./codeblocks/react-rxjs/04_2orderLinePriceCurrency.tsx"
+```
+
+```diff 22:23
+```
+
+```jsx 25:36 file="./codeblocks/react-rxjs/04_3_0orderLinePriceCurrency.tsx"
 ```
 
 ```notes
@@ -813,14 +818,7 @@ Later we will see that there is a more
 convenient way of accomplishing the same.
 ```
 
-```jsx 105,108:110 file="./codeblocks/react-rxjs/04_2orderLinePriceCurrency.tsx"
-```
-
-```notes
-moving on into the Orderline component...
-```
-
-```diff 89:102
+```diff 87:100
 ```
 
 ```notes
@@ -1025,32 +1023,6 @@ Here let's use the `useTotal` hook.
 ```jsx 150 file="./codeblocks/react-rxjs/07_2Total.tsx"
 ```
 
-```notes
-One last thing, though, we can see how
-only those components that need to rerender
-get re-rendered... Except when we add a new
-order, that all the orders get re-rendered,
-let's make sure that doesn't happen:
-```
-
-```notes
-using `memo` here should do it.
-
-Let's see... perfect!
-
-Now let's have a quick perf comparisson.
-```
-
-```diff 112
-```
-
-```notes checkout:react-rxjs/8
-perf
-```
-
-```jsx 113 file="./codeblocks/react-rxjs/08_perf.tsx"
-```
-
 </NotesCodeSurfer>
 
 ---
@@ -1160,133 +1132,39 @@ perf
 ## Performance comparisson
 
 ---
-## New requirement:
 
-### Async currency rates validation
----
-### React-RxJs implementation
----
-
-<NotesCodeSurfer>
-
-```jsx 21:24 file="./codeblocks/react-rxjs/08_perf.tsx"
-```
-
-```jsx 52:69 file="./codeblocks/react-rxjs/09_0delay-ccy-rates.tsx"
-```
-
-```diff 109:124
-```
-
-```jsx 109:131 file="./codeblocks/react-rxjs/09_1delay-ccy-rates.tsx"
-```
-
-```diff 89
-```
-
-```jsx 71:78,98 file="./codeblocks/react-rxjs/09_2delay-ccy-rates.tsx"
-```
-
-```diff 64
-```
-
-```jsx 64:76 file="./codeblocks/react-rxjs/09_3delay-ccy-rates.tsx"
-```
-
-```jsx 77:79 file="./codeblocks/react-rxjs/09_4delay-ccy-rates.tsx"
-```
-
-```jsx 79:87 file="./codeblocks/react-rxjs/09_5delay-ccy-rates.tsx"
-```
-
-```jsx 88:96 file="./codeblocks/react-rxjs/09_6delay-ccy-rates.tsx"
-```
-
-```notes checkout:react-rxjs/9
-asdf
-```
-
-```jsx 97 file="./codeblocks/react-rxjs/09_7delay-ccy-rates.tsx"
-```
-
-```diff 78:87
-```
-
-```diff 88:96
-```
-
-```diff 78:96
-```
-
-```jsx 77:109 file="./codeblocks/react-rxjs/09_8delay-ccy-rates.tsx"
-```
-
-```diff 105:109
-```
-
-</NotesCodeSurfer>
-
----
-### React implementation
----
-
-<NotesCodeSurfer>
-
-```jsx 97:115 file="./codeblocks/react/10_calculateTotal.tsx"
-```
-
-```notes checkout:react-local-state/12
-asdf
-```
-
-```jsx 110:139 file="./codeblocks/react/11_delay-currency-rate.tsx"
-````
-
-</NotesCodeSurfer>
+## Code splitting and Suspense
 
 ---
 
-## Last requirement:
-
-### Cancellation
+## Code Navigability
 
 ---
 
-<NotesCodeSurfer>
+## State Management vs Side-Effect Orchestration:
 
-```jsx 50:64 file="./codeblocks/react-rxjs/09_8delay-ccy-rates.tsx"
-```
+<Appear>
 
-```notes checkout:react-rxjs/10
-asdf
-```
+## A false dilemma
 
-```jsx 53,72,73 file="./codeblocks/react-rxjs/10_cancelation.tsx"
-```
-
-```diff 174:178
-```
-
-</NotesCodeSurfer>
+</Appear>
 
 ---
-### React implementation
+
+## Trade Offs
+
+<Appear>
+
+Steep learning curve: Observables, RxJS and React-RxJS
+
+Server Side Rendering
+
+Bad documentation (for now)
+
+API stability
+
+</Appear>
+
 ---
 
-<NotesCodeSurfer>
-
-```jsx 110:139 file="./codeblocks/react/11_delay-currency-rate.tsx"
-````
-
-```notes checkout:react-local-state/14
-asdf
-```
-
-```jsx 112,120:125,147 file="./codeblocks/react/12_cancelation.tsx"
-```
-
-```diff 154:159
-```
-
-</NotesCodeSurfer>
-
+## Thanks for listening!
