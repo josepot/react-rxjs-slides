@@ -4,9 +4,8 @@ import useSteppedSvg from "./useSteppedSvg";
 export default function CodeSplit() {
   const ref = useSteppedSvg([
     615, // index_timing
-    500, // index_compress
-    2385, // main_timing
-    500,
+    500 + 2385, // index_compress + main_timing
+    500 + 350, // assets_compress + data_timing
   ]);
 
   return (
@@ -31,73 +30,68 @@ export default function CodeSplit() {
           />
         }
       />
-      <Arrow
-        transform="translate(163, 200)"
-        opacity={0}
-        height={30}
-        width={20}
-      >
-        <animate
-          attributeName="opacity"
-          to="1"
-          dur="0.2s"
-          fill="freeze"
-          begin="index_compress.end"
-        />
+      <g>
+        <Arrow
+          transform="translate(163, 200)"
+          opacity={0}
+          height={30}
+          width={20}
+        >
+          <animate
+            attributeName="opacity"
+            to="1"
+            dur="0.2s"
+            fill="freeze"
+            begin="index_compress.end"
+          />
+          <animateTransform
+            additive="sum"
+            attributeName="transform"
+            type="translate"
+            from="0 -5"
+            to="0 0"
+            begin="index_compress.end"
+            dur="0.2s"
+            fill="freeze"
+          />
+        </Arrow>
+        <MainBox transform="translate(182, 190)" />
         <animateTransform
           additive="sum"
           attributeName="transform"
           type="translate"
-          from="0 -5"
-          to="0 0"
-          begin="index_compress.end"
-          dur="0.2s"
+          from="0 0"
+          to="-58 0"
+          begin="assets_compress.begin"
+          dur="500ms"
           fill="freeze"
         />
-      </Arrow>
-      <MainBox transform="translate(182, 190)" />
-      <Arrow
-        transform="translate(897, 280)"
-        opacity={0}
-        height={50}
-        width={70}
-      >
-        <animate
-          attributeName="opacity"
-          to="1"
-          dur="0.2s"
-          fill="freeze"
-          begin="main_timing.end"
-        />
-      </Arrow>
-      <Arrow
-        transform="translate(897, 330)"
-        opacity={0}
-        height={50}
-        width={70}
-      >
-        <animate
-          attributeName="opacity"
-          to="1"
-          dur="0.2s"
-          fill="freeze"
-          begin="main_timing.end"
-        />
-      </Arrow>
-      <Arrow
-        transform="translate(897, 380)"
-        opacity={0}
-        height={50}
-        width={70}
-      >
-        <animate
-          attributeName="opacity"
-          to="1"
-          dur="0.2s"
-          fill="freeze"
-          begin="main_timing.end"
-        />
-      </Arrow>
+      </g>
+      <g transform="translate(552, 280)">
+        <g opacity="0">
+          <Arrow
+            height={20}
+            width={70}
+            />
+          <Arrow
+            transform="translate(0, 20)"
+            height={105}
+            width={70}
+            />
+          <Arrow
+            transform="translate(0, 125)"
+            height={85}
+            width={70}
+          />
+            <animate
+              {...fadeInAnimation}
+              begin="assets_compress.end"
+            />
+        </g>
+        <DataBox text="Instruments" transform="translate(70, -20)" />
+        <DataBox text="Prices" transform="translate(70, 75)" />
+        <DataBox text="Orders" transform="translate(70, 170)" />
+      </g>
     </svg>
   );
 }
@@ -131,7 +125,7 @@ const IndexBox = ({ animation, ...props }) => {
           width: 480,
           duration: 480,
         }}
-        animation={
+        animation={[
           <animateTransform
             id="index_compress"
             additive="sum"
@@ -142,8 +136,19 @@ const IndexBox = ({ animation, ...props }) => {
             begin="index_timing.end"
             dur="500ms"
             fill="freeze"
-          />
-        }
+          />,
+          <animateTransform
+            id="assets_compress"
+            additive="sum"
+            attributeName="transform"
+            type="scale"
+            from="1 1"
+            to="0.6 1"
+            begin="main_timing.end"
+            dur="500ms"
+            fill="freeze"
+          />,
+        ]}
         transform="translate(0, 40)"
       />
       {animation}
@@ -173,16 +178,68 @@ const MainBox = ({ animation, ...props }) => {
           width: 95,
           duration: 315,
         }}
-        download={{ title: "700ms", width: 210, duration: 700 }}
+        download={{
+          title: "700ms",
+          width: 210,
+          duration: 700,
+        }}
         parse={{
           title: "1370ms",
           width: 410,
           duration: 1370,
         }}
         begin="index_compress.end"
+        animation={
+          <animateTransform
+            additive="sum"
+            attributeName="transform"
+            type="scale"
+            from="1 1"
+            to="0.6 1"
+            begin="assets_compress.begin"
+            dur="500ms"
+            fill="freeze"
+          />
+        }
         transform="translate(0, 40)"
       />
       {animation}
+    </g>
+  );
+};
+
+const DataBox = ({ text, ...props }) => {
+  return (
+    <g {...props}>
+      <text
+        x="0"
+        y="30"
+        fill="white"
+        style={{ visibility: "hidden" }}
+      >
+        {text} ~400ms
+        <animate
+          begin="data_timing.begin+10ms"
+          {...appearAnimation}
+        />
+      </text>
+      <TimingBar
+        prefix="data"
+        ttfb={{
+          width: 50,
+          duration: 310,
+        }}
+        download={{
+          width: 10,
+          duration: 40,
+        }}
+        parse={{
+          width: 0,
+          duration: 0,
+        }}
+        begin="assets_compress.end"
+        transform="translate(0, 40)"
+      />
     </g>
   );
 };
