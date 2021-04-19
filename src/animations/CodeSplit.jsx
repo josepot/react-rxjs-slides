@@ -5,8 +5,8 @@ export default function CodeSplit() {
   const ref = useSteppedSvg([
     615, // index_timing
     500, // index_compress
-    2400, // main_timing
-    500
+    2385, // main_timing
+    500,
   ]);
 
   return (
@@ -31,7 +31,12 @@ export default function CodeSplit() {
           />
         }
       />
-      <Arrow transform="translate(163, 200)" opacity={0} height={30} width={20}>
+      <Arrow
+        transform="translate(163, 200)"
+        opacity={0}
+        height={30}
+        width={20}
+      >
         <animate
           attributeName="opacity"
           to="1"
@@ -50,10 +55,13 @@ export default function CodeSplit() {
           fill="freeze"
         />
       </Arrow>
-      <MainBox
-        transform="translate(182, 190)"
-      />
-      <Arrow transform="translate(897, 280)" opacity={0} height={50} width={70}>
+      <MainBox transform="translate(182, 190)" />
+      <Arrow
+        transform="translate(897, 280)"
+        opacity={0}
+        height={50}
+        width={70}
+      >
         <animate
           attributeName="opacity"
           to="1"
@@ -62,7 +70,12 @@ export default function CodeSplit() {
           begin="main_timing.end"
         />
       </Arrow>
-      <Arrow transform="translate(897, 330)" opacity={0} height={50} width={70}>
+      <Arrow
+        transform="translate(897, 330)"
+        opacity={0}
+        height={50}
+        width={70}
+      >
         <animate
           attributeName="opacity"
           to="1"
@@ -71,7 +84,12 @@ export default function CodeSplit() {
           begin="main_timing.end"
         />
       </Arrow>
-      <Arrow transform="translate(897, 380)" opacity={0} height={50} width={70}>
+      <Arrow
+        transform="translate(897, 380)"
+        opacity={0}
+        height={50}
+        width={70}
+      >
         <animate
           attributeName="opacity"
           to="1"
@@ -85,35 +103,8 @@ export default function CodeSplit() {
 }
 
 const IndexBox = ({ animation, ...props }) => {
-  const boxSizes = [180, 60, 480];
-  const totalWidth = boxSizes.reduce((a, b) => a + b);
-
-  const disappearText = (
-    <animate
-      begin="index_compress.begin+10ms"
-      {...disappearAnimation}
-    />
-  );
-
   return (
     <g {...props}>
-      <mask id="index_reveal">
-        <rect
-          x="0"
-          y="0"
-          width="0"
-          height="100"
-          fill="white"
-        >
-          <animate
-            id="index_timing"
-            attributeName="width"
-            to={totalWidth}
-            dur="615ms"
-            fill="freeze"
-          />
-        </rect>
-      </mask>
       <text
         x="0"
         y="30"
@@ -127,71 +118,42 @@ const IndexBox = ({ animation, ...props }) => {
           {...appearAnimation}
         />
       </text>
-      <g
-        mask="url(#index_reveal)"
+      <TimingBar
+        prefix="index"
+        ttfb={{
+          title: "TTFB 130ms",
+          width: 180,
+          duration: 130,
+        }}
+        download={{ title: "5ms", width: 60, duration: 5 }}
+        parse={{
+          title: "Parse 480ms",
+          width: 480,
+          duration: 480,
+        }}
+        animation={
+          <animateTransform
+            id="index_compress"
+            additive="sum"
+            attributeName="transform"
+            type="scale"
+            from="1 1"
+            to="0.2 1"
+            begin="index_timing.end"
+            dur="500ms"
+            fill="freeze"
+          />
+        }
         transform="translate(0, 40)"
-      >
-        <animateTransform
-          id="index_compress"
-          additive="sum"
-          attributeName="transform"
-          type="scale"
-          from="1 1"
-          to="0.2 1"
-          begin="index_timing.end"
-          dur="500ms"
-          fill="freeze"
-        />
-        <DownloadBox
-          color="palegoldenrod"
-          text="TTFB 130ms"
-          width={boxSizes[0]}
-          textAnimation={disappearText}
-        />
-        <DownloadBox
-          color="goldenrod"
-          text="5ms"
-          width={boxSizes[1]}
-          textAnimation={disappearText}
-          transform="translate(180)"
-        />
-        <DownloadBox
-          color="steelblue"
-          text="Parse 480ms"
-          width={boxSizes[2]}
-          textAnimation={disappearText}
-          transform={`translate(${180 + 60})`}
-        />
-      </g>
+      />
       {animation}
     </g>
   );
 };
 
 const MainBox = ({ animation, ...props }) => {
-  const boxSizes = [95, 210, 410];
-  const totalWidth = boxSizes.reduce((a, b) => a + b);
-
   return (
     <g {...props}>
-      <mask id="main_reveal">
-        <rect
-          x="0"
-          y="0"
-          width="0"
-          height="100"
-          fill="white"
-        >
-          <animate
-            id="main_timing"
-            attributeName="width"
-            to={totalWidth}
-            dur="2400ms"
-            fill="freeze"
-            begin="index_compress.end"
-          />
-        </rect>
-      </mask>
       <text
         x="0"
         y="30"
@@ -204,29 +166,98 @@ const MainBox = ({ animation, ...props }) => {
           {...appearAnimation}
         />
       </text>
-      <g
-        mask="url(#main_reveal)"
+      <TimingBar
+        prefix="main"
+        ttfb={{
+          title: "315ms",
+          width: 95,
+          duration: 315,
+        }}
+        download={{ title: "700ms", width: 210, duration: 700 }}
+        parse={{
+          title: "1370ms",
+          width: 410,
+          duration: 1370,
+        }}
+        begin="index_compress.end"
         transform="translate(0, 40)"
-      >
-        <DownloadBox
-          color="palegoldenrod"
-          text="315ms"
-          width={boxSizes[0]}
-        />
-        <DownloadBox
-          color="goldenrod"
-          text="700ms"
-          width={boxSizes[1]}
-          transform="translate(95)"
-        />
-        <DownloadBox
-          color="steelblue"
-          text="1370ms"
-          width={boxSizes[2]}
-          transform={`translate(${95 + 210})`}
-        />
-      </g>
+      />
       {animation}
+    </g>
+  );
+};
+
+/**
+ * Creates an animation named `${prefix}_timing` that begins at `begin` and has
+ * a duration of `ttfb.duration + download.duration + parse.duration`
+ */
+const TimingBar = ({
+  prefix,
+  ttfb,
+  download,
+  parse,
+  animation,
+  begin,
+  ...props
+}) => {
+  const bars = [ttfb, download, parse];
+  const accWidth = bars.reduce(
+    (acc, b, i) => [...acc, acc[i] + b.width],
+    [0]
+  );
+  const totalDuration = bars.reduce(
+    (a, b) => a + b.duration,
+    0
+  );
+
+  const disappearText = (
+    <animate
+      begin={`${prefix}_timing.end`}
+      {...fadeOutAnimation}
+    />
+  );
+
+  return (
+    <g mask={`url(#${prefix}_reveal)`} {...props}>
+      <mask id={`${prefix}_reveal`}>
+        <rect
+          x="0"
+          y="0"
+          width="0"
+          height="100"
+          fill="white"
+        >
+          <animate
+            id={`${prefix}_timing`}
+            begin={begin}
+            attributeName="width"
+            to={accWidth[bars.length]}
+            dur={totalDuration + "ms"}
+            fill="freeze"
+          />
+        </rect>
+      </mask>
+      {animation}
+      <DownloadBox
+        color="palegoldenrod"
+        text={ttfb.title}
+        width={ttfb.width}
+        textAnimation={disappearText}
+      />
+      <DownloadBox
+        color="goldenrod"
+        text={download.title}
+        width={download.width}
+        textAnimation={disappearText}
+        transform={`translate(${accWidth[1]})`}
+      />
+      <DownloadBox
+        color="steelblue"
+        text={parse.title}
+        width={parse.width}
+        textAnimation={disappearText}
+        transform={`translate(${accWidth[2]})`}
+      />
     </g>
   );
 };
@@ -264,7 +295,11 @@ const DownloadBox = ({
   );
 };
 
-const Arrow = ({width: w = 30, height: h = 40, ...props}) => {
+const Arrow = ({
+  width: w = 30,
+  height: h = 40,
+  ...props
+}) => {
   return (
     <path
       d={`M0 0 0 ${h} ${w} ${h} ${w - 10} ${
@@ -286,6 +321,19 @@ const appearAnimation = {
 const disappearAnimation = {
   attributeName: "visibility",
   to: "hidden",
+  dur: "0.2s",
+  fill: "freeze",
+};
+
+const fadeInAnimation = {
+  attributeName: "opacity",
+  to: "1",
+  dur: "0.2s",
+  fill: "freeze",
+};
+const fadeOutAnimation = {
+  attributeName: "opacity",
+  to: "0",
   dur: "0.2s",
   fill: "freeze",
 };
