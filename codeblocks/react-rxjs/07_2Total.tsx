@@ -16,13 +16,16 @@ import {
 
 const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
 
+// Currency Rates
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
 const [useCurrencyRate, currencyRate$] = bind(
   rateChange$,
   (currency) => initialCurrencyRates[currency],
 )
 
+// OrderIds
 const initialOrderIds = Object.keys(initialOrders)
+
 const [addOrder$, onAddOrder] = createSignal()
 const [useOrderIds, orderIds$] = bind(
   addOrder$.pipe(
@@ -32,6 +35,7 @@ const [useOrderIds, orderIds$] = bind(
   initialOrderIds,
 )
 
+// Order
 const [priceChange$, onPriceChange] = createKeyedSignal<string, number>()
 const [currencyChange$, onCurrencyChange] = createKeyedSignal<string, string>()
 
@@ -52,13 +56,12 @@ const [useOrder, order$] = bind((id: string) => {
   }).pipe(map((update) => ({ ...initialOrder, ...update })))
 })
 
+// Total base currency price
 const [useTotal, total$] = bind(
   combineKeys(orderIds$, pipe(order$, pluck("baseCurrencyPrice"))).pipe(
     map((prices) => Array.from(prices.values()).reduce((a, b) => a + b, 0)),
   ),
 )
-
-total$.subscribe()
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
   const rate = useCurrencyRate(currency)

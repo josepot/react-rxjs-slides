@@ -59,8 +59,6 @@ const [useTotal, total$] = bind(
   ),
 )
 
-total$.subscribe()
-
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
   const rate = useCurrencyRate(currency)
   return (

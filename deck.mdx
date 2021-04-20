@@ -26,19 +26,45 @@ Bringing Reactivity to React
 
 ---
 
-<NoCodeSplit />
-
----
-
-<SimpleCodeSplit />
-
----
-
-<EagerRequests />
-
----
-
 ## What this talk is about
+
+<Appear>
+
+<Image
+  src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/old-score.png"
+  width="432px"
+  height="265px"
+/>
+
+<br />
+
+<Image
+  src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/new-score.png"
+  width="432px"
+  height="265px"
+/>
+
+</Appear>
+
+<Notes>
+- I will be presenting React-RxJS, which is a library that provides
+a set of bindings so that we can use RxJS as a state-management library with React.
+
+- Something to keep in mind, though, is that I work at Adaptive Financial Consulting,
+where we specialice in building hihgly performant real-time data solutions. So,
+please keep in mind that this library has been created to address some of the
+challenges that we face with the kind of applications that we build, which are 
+usually quite different from most web-applications out there.
+
+- So, I'm not here to claim that this is the ultimate state-management solution.
+There are many other amazing state-management libraries out there, that could
+be a better fit for your needs.
+
+- However, I think that there could be other people out there facing the same kind of
+challenges that we are facing, and perhaps for those React-RxJS could be an interesting
+alternative.
+
+</Notes>
 
 ---
 
@@ -62,7 +88,17 @@ OSS Contributor @ **RxJS, React-Redux, React-Router...**
 
 ---
 
-## The problem
+## Let's solve a problem
+
+Borrowed from Michel Westrate's talk:
+
+<Image
+  src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/MobxTalk.png"
+  width="363px"
+  height="202px"
+/>
+
+https://www.youtube.com/watch?v=ZHxFrbK3VB0
 
 ---
 
@@ -584,6 +620,9 @@ Anyways, this does the trick.
 
 ```
 
+```diff 24:95
+```
+
 </NotesCodeSurfer>
 
 ---
@@ -1032,10 +1071,13 @@ Let's finish this...
 Here let's use the `useTotal` hook.
 ```
 
-```diff 149:152
+```diff 147:150
 ```
 
-```jsx 150 file="./codeblocks/react-rxjs/07_2Total.tsx"
+```jsx 153 file="./codeblocks/react-rxjs/07_2Total.tsx"
+```
+
+```diff 19:64
 ```
 
 </NotesCodeSurfer>
@@ -1048,19 +1090,62 @@ Here let's use the `useTotal` hook.
 
 <NotesCodeSurfer>
 
-```jsx file="./codeblocks/LastPosition.tsx"
+```jsx file="./codeblocks/App.tsx"
 ```
 
-```diff 26:31,34,38
+```diff 13:17
+```
+
+```diff 17
 ```
 
 ```jsx file="./codeblocks/Analytics1.tsx"
 ```
 
-```diff 22,26
+```diff 22:26
+```
+
+```diff 23
+```
+
+```jsx file="./codeblocks/ProfitAndLoss.tsx"
+```
+
+```diff 14,15,18
+```
+
+```jsx file="./codeblocks/LastPosition.tsx"
+```
+
+``` diff 5,26:31,34,38
+```
+
+``` diff 33:41
+```
+
+```jsx 4:21 file="./codeblocks/ProfitAndLoss.tsx"
+```
+
+```jsx 22:26 file="./codeblocks/Analytics1.tsx"
 ```
 
 </NotesCodeSurfer>
+
+---
+
+## Code Splitting
+
+---
+
+<NoCodeSplit />
+
+---
+
+<SimpleCodeSplit />
+
+---
+
+<EagerRequests />
 
 ---
 
