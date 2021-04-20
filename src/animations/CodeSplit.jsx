@@ -2,15 +2,15 @@ import { React } from "react";
 import useSteppedSvg from "./useSteppedSvg";
 
 export default function CodeSplit() {
-  const ref = useSteppedSvg([
-    615, // index_timing
-    500 + 2385, // index_compress + main_timing
-    500 + 350, // assets_compress + data_timing
-  ]);
+  // const ref = useSteppedSvg([
+  //   615, // index_timing
+  //   500 + 2385, // index_compress + main_timing
+  //   500 + 350, // assets_compress + data_timing
+  // ]);
 
   return (
     <svg
-      ref={ref}
+      // ref={ref}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 1024 768"
       style={{ fontSize: "24px" }}
@@ -69,28 +69,34 @@ export default function CodeSplit() {
       </g>
       <g transform="translate(552, 280)">
         <g opacity="0">
-          <Arrow
-            height={20}
-            width={70}
-            />
+          <Arrow height={20} width={70} />
           <Arrow
             transform="translate(0, 20)"
             height={105}
             width={70}
-            />
+          />
           <Arrow
             transform="translate(0, 125)"
             height={85}
             width={70}
           />
-            <animate
-              {...fadeInAnimation}
-              begin="assets_compress.end"
-            />
+          <animate
+            {...fadeInAnimation}
+            begin="assets_compress.end"
+          />
         </g>
-        <DataBox text="Instruments" transform="translate(70, -20)" />
-        <DataBox text="Prices" transform="translate(70, 75)" />
-        <DataBox text="Orders" transform="translate(70, 170)" />
+        <DataBox
+          text="Instruments"
+          transform="translate(70, -20)"
+        />
+        <DataBox
+          text="Prices"
+          transform="translate(70, 75)"
+        />
+        <DataBox
+          text="Orders"
+          transform="translate(70, 170)"
+        />
       </g>
     </svg>
   );
@@ -99,17 +105,12 @@ export default function CodeSplit() {
 const IndexBox = ({ animation, ...props }) => {
   return (
     <g {...props}>
-      <text
-        x="0"
-        y="30"
-        fill="white"
-        style={{ visibility: "hidden" }}
-      >
+      <text x="0" y="30" fill="white" opacity="0">
         index.html ~615ms
         <animate
           id="index_appear"
           begin="10ms"
-          {...appearAnimation}
+          {...fadeInAnimation}
         />
       </text>
       <TimingBar
@@ -159,16 +160,11 @@ const IndexBox = ({ animation, ...props }) => {
 const MainBox = ({ animation, ...props }) => {
   return (
     <g {...props}>
-      <text
-        x="0"
-        y="30"
-        fill="white"
-        style={{ visibility: "hidden" }}
-      >
+      <text x="0" y="30" fill="white" opacity="0">
         main.js ~2400ms
         <animate
           begin="main_timing.begin+10ms"
-          {...appearAnimation}
+          {...fadeInAnimation}
         />
       </text>
       <TimingBar
@@ -211,16 +207,11 @@ const MainBox = ({ animation, ...props }) => {
 const DataBox = ({ text, ...props }) => {
   return (
     <g {...props}>
-      <text
-        x="0"
-        y="30"
-        fill="white"
-        style={{ visibility: "hidden" }}
-      >
+      <text x="0" y="30" fill="white" opacity="0">
         {text} ~400ms
         <animate
           begin="data_timing.begin+10ms"
-          {...appearAnimation}
+          {...fadeInAnimation}
         />
       </text>
       <TimingBar
@@ -367,19 +358,6 @@ const Arrow = ({
       {...props}
     />
   );
-};
-
-const appearAnimation = {
-  attributeName: "visibility",
-  to: "visible",
-  dur: "0.2s",
-  fill: "freeze",
-};
-const disappearAnimation = {
-  attributeName: "visibility",
-  to: "hidden",
-  dur: "0.2s",
-  fill: "freeze",
 };
 
 const fadeInAnimation = {
