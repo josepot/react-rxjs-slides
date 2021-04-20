@@ -6,7 +6,7 @@ import {
   fadeInAnimation,
 } from "./common";
 
-export default function NoCodeSplit() {
+export default function SimpleCodeSplit() {
   const ref = useSteppedSvg([
     615 + 450 + 280 + 120, // index + main + analytics + data
     500,
