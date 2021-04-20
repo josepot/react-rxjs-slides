@@ -128,12 +128,12 @@ export const Arrow = ({
 export const fadeInAnimation = {
   attributeName: "opacity",
   to: "1",
-  dur: "0.2s",
+  dur: "120ms",
   fill: "freeze",
 };
 export const fadeOutAnimation = {
   attributeName: "opacity",
   to: "0",
-  dur: "0.2s",
+  dur: "120ms",
   fill: "freeze",
 };
