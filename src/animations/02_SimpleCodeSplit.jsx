@@ -53,22 +53,25 @@ export default function SimpleCodeSplit() {
               size={10}
               prefix="liverates"
             />
-            <Arrow
-              transform="translate(45, 89)"
-              opacity={0}
-              height={30}
-              width={20}
-            >
-              <animate
-                {...fadeInAnimation}
+            <g>
+              <Arrow
+                transform="translate(45, 89)"
+                opacity={0}
+                height={30}
+                width={20}
+              >
+                <animate
+                  {...fadeInAnimation}
+                  begin="liverates_timing.end"
+                />
+              </Arrow>
+              <DataBox
+                transform="translate(65, 78)"
+                text="LiveRates"
                 begin="liverates_timing.end"
               />
-            </Arrow>
-            <DataBox
-              transform="translate(65, 78)"
-              text="LiveRates"
-              begin="liverates_timing.end"
-            />
+              <AnimateMove amount={-15} />
+            </g>
           </g>
           <Arrow
             transform="translate(337, 349)"
@@ -87,22 +90,25 @@ export default function SimpleCodeSplit() {
               size={30}
               prefix="analytics"
             />
-            <Arrow
-              transform="translate(95, 89)"
-              opacity={0}
-              height={30}
-              width={20}
-            >
-              <animate
-                {...fadeInAnimation}
+            <g>
+              <Arrow
+                transform="translate(95, 89)"
+                opacity={0}
+                height={30}
+                width={20}
+              >
+                <animate
+                  {...fadeInAnimation}
+                  begin="analytics_timing.end"
+                />
+              </Arrow>
+              <DataBox
+                transform="translate(115, 78)"
+                text="Analytics"
                 begin="analytics_timing.end"
               />
-            </Arrow>
-            <DataBox
-              transform="translate(115, 78)"
-              text="Analytics"
-              begin="analytics_timing.end"
-            />
+              <AnimateMove amount={-32} />
+            </g>
           </g>
           <Arrow
             transform="translate(337, 515)"
@@ -121,60 +127,65 @@ export default function SimpleCodeSplit() {
               size={15}
               prefix="trades"
             />
-            <Arrow
-              transform="translate(57, 89)"
-              opacity={0}
-              height={30}
-              width={20}
-            >
-              <animate
-                {...fadeInAnimation}
+            <g>
+              <Arrow
+                transform="translate(57, 89)"
+                opacity={0}
+                height={30}
+                width={20}
+              >
+                <animate
+                  {...fadeInAnimation}
+                  begin="trades_timing.end"
+                />
+              </Arrow>
+              <DataBox
+                transform="translate(77, 78)"
+                text="Trades"
                 begin="trades_timing.end"
               />
-            </Arrow>
-            <DataBox
-              transform="translate(77, 78)"
-              text="Trades"
-              begin="trades_timing.end"
-            />
+              <AnimateMove amount={-20} />
+            </g>
           </g>
-          
-          <animateTransform
-            id="main_expand"
-            additive="sum"
-            attributeName="transform"
-            type="translate"
-            from="0 0"
-            to="116 0"
-            begin="main_expand.begin"
-            dur="500ms"
-            fill="freeze"
-          />
-          <animateTransform
-            id="main_compress"
-            additive="sum"
-            attributeName="transform"
-            type="translate"
-            from="0 0"
-            to="-116 0"
-            begin="main_compress.begin"
-            dur="500ms"
-            fill="freeze"
-          />
+
+          <AnimateMove amount={116} />
         </g>
       </g>
     </svg>
   );
 }
 
+const AnimateMove = ({ amount }) => [
+  <animateTransform
+    id="main_expand"
+    additive="sum"
+    attributeName="transform"
+    type="translate"
+    from="0 0"
+    to={`${amount} 0`}
+    begin="main_expand.begin"
+    dur="500ms"
+    fill="freeze"
+  />,
+  <animateTransform
+    id="main_compress"
+    additive="sum"
+    attributeName="transform"
+    type="translate"
+    from="0 0"
+    to={`${-amount} 0`}
+    begin="main_compress.begin"
+    dur="500ms"
+    fill="freeze"
+  />,
+];
+
 const IndexBox = ({ ...props }) => {
   return (
     <g {...props}>
       <text x="0" y="30" fill="white" opacity="0">
         index.html
-        <animate
-          {...fadeInAnimation}
-        />
+        <animate {...fadeInAnimation} />
       </text>
       <TimingBar
         prefix="index"
@@ -274,6 +285,28 @@ const ChunkBox = ({ text, prefix, size, ...props }) => {
         }}
         begin="main_timing.end"
         transform="translate(0, 40)"
+        animation={[
+          <animateTransform
+            additive="sum"
+            attributeName="transform"
+            type="scale"
+            from="1 1"
+            to="0.66 1"
+            begin="main_expand.begin"
+            dur="500ms"
+            fill="freeze"
+          />,
+          <animateTransform
+            additive="sum"
+            attributeName="transform"
+            type="scale"
+            from="1 1"
+            to="1.5 1"
+            begin="main_compress.begin"
+            dur="500ms"
+            fill="freeze"
+          />,
+        ]}
       />
     </g>
   );
