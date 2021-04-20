@@ -8,7 +8,7 @@ import {
 
 export default function SimpleCodeSplit() {
   const ref = useSteppedSvg([
-    615 + 450 + 280 + 120, // index + main + analytics + data
+    615 + 450 + 380 + 120, // index + main + analytics + data
     500,
     500,
   ]);
@@ -50,11 +50,11 @@ export default function SimpleCodeSplit() {
           <g transform="translate(357, 309)">
             <ChunkBox
               text="LiveRates-chunk.js"
-              size={5}
+              size={10}
               prefix="liverates"
             />
             <Arrow
-              transform="translate(32, 89)"
+              transform="translate(45, 89)"
               opacity={0}
               height={30}
               width={20}
@@ -65,7 +65,7 @@ export default function SimpleCodeSplit() {
               />
             </Arrow>
             <DataBox
-              transform="translate(52, 78)"
+              transform="translate(65, 78)"
               text="LiveRates"
               begin="liverates_timing.end"
             />
@@ -84,11 +84,11 @@ export default function SimpleCodeSplit() {
           <g transform="translate(357, 475)">
             <ChunkBox
               text="Analytics-chunk.js"
-              size={20}
+              size={30}
               prefix="analytics"
             />
             <Arrow
-              transform="translate(69, 89)"
+              transform="translate(95, 89)"
               opacity={0}
               height={30}
               width={20}
@@ -99,7 +99,7 @@ export default function SimpleCodeSplit() {
               />
             </Arrow>
             <DataBox
-              transform="translate(89, 78)"
+              transform="translate(115, 78)"
               text="Analytics"
               begin="analytics_timing.end"
             />
@@ -118,11 +118,11 @@ export default function SimpleCodeSplit() {
           <g transform="translate(357, 641)">
             <ChunkBox
               text="Trades-chunk.js"
-              size={10}
+              size={15}
               prefix="trades"
             />
             <Arrow
-              transform="translate(45, 89)"
+              transform="translate(57, 89)"
               opacity={0}
               height={30}
               width={20}
@@ -133,7 +133,7 @@ export default function SimpleCodeSplit() {
               />
             </Arrow>
             <DataBox
-              transform="translate(65, 78)"
+              transform="translate(77, 78)"
               text="Trades"
               begin="trades_timing.end"
             />

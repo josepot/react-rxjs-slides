@@ -10,7 +10,7 @@ import {
 export default function EagerRequests() {
   const ref = useSteppedSvg([
     615 + 450 + 380, // index + main + analytics
-    500, // move_chunks
+    500 + 120, // move_chunks + arrows
   ]);
 
   return (

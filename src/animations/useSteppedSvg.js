@@ -15,6 +15,7 @@ export default (stepLengths) => {
   );
 
   const setTime = (time) => {
+    if(time === undefined) return;
     // console.log('setTime', time);
     svgRef.current.setCurrentTime(time / 1000);
   };
