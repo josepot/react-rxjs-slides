@@ -1,9 +1,13 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useSteps } from "mdx-deck";
 
-export default (stepLengths) => {
+export default (stepLengths, autoPlay = true) => {
+  const [mounted, setMounted] = useState(false);
   const svgRef = useRef();
-  const step = useSteps(stepLengths.length);
+  const _step = useSteps(
+    stepLengths.length - (autoPlay ? 1 : 0)
+  );
+  const step = _step + (mounted && autoPlay ? 1 : 0);
   const pS = usePrevious(step);
   const previousStep = pS == undefined ? step : pS;
 
@@ -15,7 +19,7 @@ export default (stepLengths) => {
   );
 
   const setTime = (time) => {
-    if(time === undefined) return;
+    if (time === undefined) return;
     // console.log('setTime', time);
     svgRef.current.setCurrentTime(time / 1000);
   };
@@ -38,7 +42,7 @@ export default (stepLengths) => {
       const timer = setTimeout(() => {
         setTime(accumulatedTime[step]);
         pause();
-      }, accumulatedTime[step] - accumulatedTime[previousStep]);
+      }, accumulatedTime[step] - accumulatedTime[previousStep] - 40);
 
       return () => {
         clearTimeout(timer);
@@ -49,6 +53,8 @@ export default (stepLengths) => {
     setTime(accumulatedTime[step]);
     pause();
   }, [step]);
+
+  useEffect(() => setMounted(true), []);
 
   return svgRef;
 };
