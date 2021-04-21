@@ -1077,6 +1077,13 @@ Here let's use the `useTotal` hook.
 ```jsx 153 file="./codeblocks/react-rxjs/07_2Total.tsx"
 ```
 
+```notes
+Perhaps at this point you are thinking:
+"Sure, but that is a contrived example, does this actually scale in a real App"?
+
+I'm glad you asked, let me present you... Reactive Trader
+```
+
 ```diff 19:64
 ```
 
@@ -1084,7 +1091,70 @@ Here let's use the `useTotal` hook.
 
 ---
 
-## React Suspense for data loading
+<Notes>
+
+Reactive Trader a fully open-source showcase trading platform, that's we've built at
+Adaptive. You can get the code and/or contribute if you want, it's available
+on github and the url of the repo is...
+
+Reactive-Trader is a key project for us, for 2 different reasons:
+
+- The first one is that most of our clients are financial institutions that don't
+want for their competitors to know that we are doing work for them, but most
+importantly they don't want for their competitors to know the kind of work that
+we are doing for them. That's why it's important for us to have
+showcase applications, so that we can demo to our potential clients what we
+are capable of.
+
+- The second reason is that at Adaptive we foster innovation and Reactive Trader
+is a tool that allows us to experiment better ways of doing things and share that
+knowledge, not only inside the company, but also externaly.
+
+However, Reactive Trader is a project that got started 6 years ago and it has
+gone through different refactors... The latest one started a few monnths
+ago when we decided to fully rearchitect it by leaverage React-RxJS.
+
+So, for the rest of the presentation I'm going to be using the code of
+Reactive-Trader to explain things like: how thanks to react-rxjs we can leaverage
+some features from React Concurrent Mode, how these features have helped us to drastically
+improve the loading times, without compromising the way that we write our code,
+and how thansk to react-rxjs we now have a code-base that's a lot easier to
+"code-navigate".
+
+Let's have a quick look at Reactive-Trader, we won't be doing a deep-dive on
+all its features, but let me highlight its 3 different main sections and what they
+are about:
+- The live-rates: they allow the user to trade on a different set of assets
+at the live rate that's displayed in the buy/sell buttons. If the nominal value
+is too high, then they can not trade at the standard-market price, they need to request
+for a quote... This assets can be filtered, and the user can change the view, in case that
+they want to show/hide the historical prices of that asset.
+
+- Then we have the Trades section, which is a table for displaying the latest
+transactions, this ones can be filtered, sorted, downloaded into an CSV file, etc
+
+- And the last section is the analytics, which has 3 different sub-sections:
+- The global profit and loss chart, which at the top it displays the current
+balance.
+
+- Then a buble-chart that displays the volume for each currency
+
+- And another the PnL bars, which display the balance per each currency-pair
+
+Ok, now that we are a bit more familiar with what Reactive-Trader does,
+let me show you something cool...
+
+</Notes>
+
+## Reactive Trader®
+
+<Appear>
+https://github.com/AdaptiveConsulting/ReactiveTraderCloud
+</Appear>
+
+---
+
+## Using React Suspense for data loading
 
 ---
 
