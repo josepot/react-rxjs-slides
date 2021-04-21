@@ -1,10 +1,14 @@
 import { React } from "react";
 import useSteppedSvg from "./useSteppedSvg";
-import { TimingBar, Arrow, fadeInAnimation } from './common';
+import {
+  TimingBar,
+  Arrow,
+  fadeInAnimation,
+} from "./common";
 
 export default function NoCodeSplit() {
   const ref = useSteppedSvg([
-    615, // index_timing
+    145, // index_timing
     500 + 2385, // index_compress + main_timing
     500 + 350, // assets_compress + data_timing
     200, // unused_fade_in
@@ -19,18 +23,28 @@ export default function NoCodeSplit() {
     >
       <IndexBox
         transform="translate(150, 200)"
-        animation={
+        animation={[
           <animateTransform
             additive="sum"
             attributeName="transform"
             type="translate"
             from="0 0"
-            to="-130 -90"
+            to="-23 -90"
             begin="index_compress.begin"
             dur="500ms"
             fill="freeze"
-          />
-        }
+          />,
+          <animateTransform
+            additive="sum"
+            attributeName="transform"
+            type="translate"
+            from="0 0"
+            to="-43 0"
+            begin="assets_compress.begin"
+            dur="500ms"
+            fill="freeze"
+          />,
+        ]}
       />
       <g>
         <Arrow
@@ -69,9 +83,27 @@ export default function NoCodeSplit() {
           fill="freeze"
         />
         <g opacity="0" transform="translate(182, 190)">
-          <rect x="83" y="40" width="100" height="50" fill="indianred" fillOpacity="0.7" />
-          <rect x="230" y="40" width="199" height="50" fill="indianred" fillOpacity="0.7" />
-          <animate id="unused_fade_in" begin="data_timing.end" {...fadeInAnimation} />
+          <rect
+            x="83"
+            y="40"
+            width="100"
+            height="50"
+            fill="indianred"
+            fillOpacity="0.7"
+          />
+          <rect
+            x="230"
+            y="40"
+            width="199"
+            height="50"
+            fill="indianred"
+            fillOpacity="0.7"
+          />
+          <animate
+            id="unused_fade_in"
+            begin="data_timing.end"
+            {...fadeInAnimation}
+          />
         </g>
       </g>
       <g transform="translate(552, 280)">
@@ -93,15 +125,15 @@ export default function NoCodeSplit() {
           />
         </g>
         <DataBox
-          text="Instruments"
+          text="LiveRates"
           transform="translate(70, -20)"
         />
         <DataBox
-          text="Prices"
+          text="Analytics"
           transform="translate(70, 75)"
         />
         <DataBox
-          text="Orders"
+          text="Trades"
           transform="translate(70, 170)"
         />
       </g>
@@ -113,7 +145,7 @@ const IndexBox = ({ animation, ...props }) => {
   return (
     <g {...props}>
       <text x="0" y="30" fill="white" opacity="0">
-        index.html ~615ms
+        index.html ~150ms
         <animate
           id="index_appear"
           begin="10ms"
@@ -124,14 +156,14 @@ const IndexBox = ({ animation, ...props }) => {
         prefix="index"
         ttfb={{
           title: "TTFB 130ms",
-          width: 180,
+          width: 540,
           duration: 130,
         }}
         download={{ title: "5ms", width: 60, duration: 5 }}
         parse={{
-          title: "Parse 480ms",
-          width: 480,
-          duration: 480,
+          title: "10ms",
+          width: 120,
+          duration: 10,
         }}
         animation={[
           <animateTransform
@@ -140,7 +172,7 @@ const IndexBox = ({ animation, ...props }) => {
             attributeName="transform"
             type="scale"
             from="1 1"
-            to="0.2 1"
+            to="0.05 1"
             begin="index_timing.end"
             dur="500ms"
             fill="freeze"

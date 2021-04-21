@@ -8,7 +8,7 @@ import {
 
 export default function SimpleCodeSplit() {
   const ref = useSteppedSvg([
-    615 + 450 + 380 + 120, // index + main + analytics + data
+    145 + 450 + 380 + 120, // index + main + analytics + data
     500,
     500,
   ]);
@@ -21,7 +21,7 @@ export default function SimpleCodeSplit() {
       style={{ fontSize: "24px" }}
     >
       <g transform="translate(100, -100)">
-        <IndexBox transform="translate(100, 150)" />
+        <IndexBox transform="translate(170, 150)" />
         <Arrow
           transform="translate(203, 240)"
           opacity={0}
@@ -190,13 +190,13 @@ const IndexBox = ({ ...props }) => {
       <TimingBar
         prefix="index"
         ttfb={{
-          width: 26,
+          width: 20,
           duration: 130,
         }}
-        download={{ width: 8, duration: 5 }}
+        download={{ width: 5, duration: 5 }}
         parse={{
-          width: 70,
-          duration: 480,
+          width: 8,
+          duration: 10,
         }}
         transform="translate(0, 40)"
       />

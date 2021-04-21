@@ -9,7 +9,7 @@ import {
 
 export default function EagerRequests() {
   const ref = useSteppedSvg([
-    615 + 450 + 380, // index + main + analytics
+    145 + 450 + 380, // index + main + analytics
     500 + 120, // move_chunks + arrows
   ]);
 
@@ -21,7 +21,7 @@ export default function EagerRequests() {
       style={{ fontSize: "24px" }}
     >
       <g transform="translate(150, -100)">
-        <IndexBox transform="translate(100, 150)" />
+        <IndexBox transform="translate(170, 150)" />
         <Arrow
           transform="translate(203, 240)"
           opacity={0}
@@ -118,13 +118,13 @@ const IndexBox = ({ ...props }) => {
       <TimingBar
         prefix="index"
         ttfb={{
-          width: 26,
+          width: 20,
           duration: 130,
         }}
-        download={{ width: 8, duration: 5 }}
+        download={{ width: 5, duration: 5 }}
         parse={{
-          width: 70,
-          duration: 480,
+          width: 8,
+          duration: 10,
         }}
         transform="translate(0, 40)"
       />
