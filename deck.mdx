@@ -28,41 +28,41 @@ Bringing Reactivity to React
 
 ## What this talk is about
 
-<Appear>
-
-<Image
-  src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/old-score.png"
-  width="432px"
-  height="265px"
-/>
-
-<br />
-
-<Image
-  src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/new-score.png"
-  width="432px"
-  height="265px"
-/>
-
-</Appear>
-
 <Notes>
-- I will be presenting React-RxJS, which is a library that provides
-a set of bindings so that we can use RxJS as a state-management library with React.
 
-- Something to keep in mind, though, is that I work at Adaptive Financial Consulting,
-where we specialice in building hihgly performant real-time data solutions. So,
-please keep in mind that this library has been created to address some of the
-challenges that we face with the kind of applications that we build, which are 
-usually quite different from most web-applications out there.
+Hi! first off, thanks a lot for having me at RxJS Live!
 
-- So, I'm not here to claim that this is the ultimate state-management solution.
-There are many other amazing state-management libraries out there, that could
-be a better fit for your needs.
+Since the name of this conference is RxJS live! I guess that I don't have to
+convince you about the benefits of using Observables and RxJS, right?
 
-- However, I think that there could be other people out there facing the same kind of
-challenges that we are facing, and perhaps for those React-RxJS could be an interesting
-alternative.
+Also, even if this is not a React conference, I'm going to assume that most of
+you are somewhat familiar with React. For those of you who are not familiar with
+React, I have to warn you: this talk it's going to be a little bit difficult to
+follow, but there are some parts that you may find interesting anyways.
+
+For those of you who have experience with React: have you ever wished that
+you could use RxJS Observables for managing the domain state of your
+applications?
+
+Not as a means to aid a deficient and incomplete state management library, like
+we often do, but as a fully featured tool for managing our domain state?
+
+Well I certainly did, and in this presentation I will be explaining why
+thanks to React-RxJs we will be able to use RxJS as an amazingly powerul state
+management library.
+
+In this talk I will be highlighting 3 benefits of using React-RxJS:
+
+- The first one is that it allows us to derive our state using streams without
+having to worry about triggering undesired React re-renders.
+
+- The second one is that these bindings fully leaverage React Suspense, both
+for data-loading and for code-splitting... and how thanks to this can greatly
+improve the loading times of our React Applications.
+
+- And the third benefit is that using streams for handling domain state produces
+code that it's much easier to navigate, therefore making our solutions easier
+to maintain.
 
 </Notes>
 
@@ -72,9 +72,9 @@ alternative.
 
 <Appear>
 
-Front End Architect @ **Adaptive Financial Consuting**
-
 Creator @ **React-RxJS**
+
+Front End Architect @ **Adaptive Financial Consuting**
 
 Creator @ **Redux-Views**
 
@@ -88,7 +88,7 @@ OSS Contributor @ **RxJS, React-Redux, React-Router...**
 
 ---
 
-## Let's solve a problem
+## Let's build a demo application
 
 Borrowed from Michel Westrate's talk:
 
@@ -102,13 +102,41 @@ https://www.youtube.com/watch?v=ZHxFrbK3VB0
 
 ---
 
+## Orders and Exchange rates: our demo application
+
+<Notes>
+This is the demo app that we will be building.
+
+This application has:
+- a section with orderlines and
+- a section with exchange-rates that apply to them
+
+The user can edit the price and the currency of each order, and when
+they do the base-currency-price gets updated accordingly.
+
+The only tricky thing about this, is that the base-currency-price field
+depends on the currency-rate of the selected currency.
+
+Meaning that the values of the exchange rates affect the values of the orders.
+
+The demo App an Add button, that it's going to add a random order when we press
+it and a field with the sum of the base-currency-prices.
+
+We will first build it using just React,
+and then we will solve the same problem using React-RxJS.
+
+</Notes>
+
+---
+
 <NotesCodeSurfer>
 
 ```notes checkout:react-local-state/1
 Before we start coding, let's get familiar with
-the code that Matt -our awesome product designer-
-has prepared for us. Here we have the root
-component, which has two main sections:
+the starting point. Our awesome product designer
+has set this up for us, it's a bunch of presentation
+components without any state, and our work is to
+bring this to life.
 
 - The Orders component
 - And the Currencies
@@ -627,6 +655,55 @@ Anyways, this does the trick.
 
 ---
 
+<Notes>
+So, I don't know you, but I find this way of managing state super tedious:
+
+Every time that we have to lift the state we have to:
+
+- start worring about avoiding re-renders
+- also, we don't have an easy way to define derive state, so we endup putting
+business logic inside the components
+- Even after having applied all the recomended performance optimizations, we
+still see components that are being recomputed for state changes that don't
+affect them.
+
+But why?
+
+I think that this happens because we are conflating the tree view with the
+state graph.
+
+What does that even mean, right?
+
+Well, this is a representation of our tree view, this is how our components
+are being composed.
+
+However, if we had to represent a diagram with the relations of our state,
+that diagram would look more or less like this:
+
+So, by using react as a state management library we are trying to use a tree to
+model the relations of our state (pause), which is not a tree.
+
+And that puts us in this awkard position, where every time that we need to
+derive state from another piece of state, we endup creating coupling between them.
+
+However, if every time that we define a dynamic value we make that definition
+based on how it relates to other dynamic values, then we will be building a
+reactive and loosely coupled solution. Because our entities are only aware of
+those entities that the depend upon for calculating ther next state, however
+they don't know anything about the entities that are using them.
+
+Wouldn't be great if we had a tool that allowed us to define our domain state
+like this? Sure, right?
+
+However, if those reactive pieces of state live outsid of React, how are we
+going to consume them from our React components?
+
+Well, that's why React-RxJS was created: to help us model our state based
+on its actual relations, and then using react-hooks to easily consume
+the state-entities inside our React components.
+
+</Notes>
+
 ## View tree vs State Graph
 
 ---
@@ -675,29 +752,18 @@ different things:
 - A shared and replayable version
 of the input observable. In other
 words, the improved version of the
-input observable that the hook
-is going to be using behind the
-scenes.
-
-It's very similar to applying a 
-`shareReplay(1)` to the input observable,
-but with the difference
-that it doesn't create memory-leaks.
-because when all it's subscribers
-unsubscribe from it, it clears
-its state and it unsubscribes from
-its source.
+input observable so that we can
+keep deriving state from it.
 
 Using `bind` here may look like
 an overkill, but it has 2 advantages
 over using react-context:
 
-1) It's a lot easier to setup.
+1) It's a less boilerplate.
 2) If in the future the currencies
 is become a dynamic value, we can
-replace the `EMPTY` stream with the
-observable of active currencies without
-having to change anything else.
+replace the `EMPTY` stream with a
+stream of active currencies.
 ```
 
 ```jsx 13 file="./codeblocks/react-rxjs/02_1useCurrencies.tsx"
@@ -1044,23 +1110,6 @@ So, we combine the stream of orderIds$
 with the stream of baseCurrencyPrices,
 and then we add those values together.
 
-Also, notice how again we are using `bind`
-without providing a default value.
-
-Meaning that we have to make sure that
-we are subscribed to the total$ stream
-before the component that it's going
-to render the total gets rendered.
-
-Again, there are different ways of doing
-that, but the most straightforward
-is to use Subscribe. Also, since
-the total$ stream already subscribes
-itself to all the order$ streams,
-we will be able to get rid of the
-previous Subscribe that we were
-using inside the Orders component.
-
 Let's finish this...
 ```
 
@@ -1114,36 +1163,6 @@ However, Reactive Trader is a project that got started 6 years ago and it has
 gone through different refactors... The latest one started a few monnths
 ago when we decided to fully rearchitect it by leaverage React-RxJS.
 
-So, for the rest of the presentation I'm going to be using the code of
-Reactive-Trader to explain things like: how thanks to react-rxjs we can leaverage
-some features from React Concurrent Mode, how these features have helped us to drastically
-improve the loading times, without compromising the way that we write our code,
-and how thansk to react-rxjs we now have a code-base that's a lot easier to
-"code-navigate".
-
-Let's have a quick look at Reactive-Trader, we won't be doing a deep-dive on
-all its features, but let me highlight its 3 different main sections and what they
-are about:
-- The live-rates: they allow the user to trade on a different set of assets
-at the live rate that's displayed in the buy/sell buttons. If the nominal value
-is too high, then they can not trade at the standard-market price, they need to request
-for a quote... This assets can be filtered, and the user can change the view, in case that
-they want to show/hide the historical prices of that asset.
-
-- Then we have the Trades section, which is a table for displaying the latest
-transactions, this ones can be filtered, sorted, downloaded into an CSV file, etc
-
-- And the last section is the analytics, which has 3 different sub-sections:
-- The global profit and loss chart, which at the top it displays the current
-balance.
-
-- Then a buble-chart that displays the volume for each currency
-
-- And another the PnL bars, which display the balance per each currency-pair
-
-Ok, now that we are a bit more familiar with what Reactive-Trader does,
-let me show you something cool...
-
 </Notes>
 
 ## Reactive Trader®
@@ -1151,6 +1170,40 @@ let me show you something cool...
 <Appear>
 <p>https://github.com/AdaptiveConsulting/ReactiveTraderCloud</p>
 </Appear>
+
+---
+
+## Code Splitting
+
+---
+
+<NoCodeSplit />
+
+---
+
+<SimpleCodeSplit />
+
+---
+
+<EagerRequests />
+
+---
+
+<CodeSurfer>
+
+```jsx 22:26 file="./codeblocks/Analytics1.tsx"
+```
+
+```diff 23:25
+```
+
+```jsx file="./codeblocks/Analytics2.tsx"
+```
+
+```jsx file="./codeblocks/Analytics3.tsx"
+```
+
+</CodeSurfer>
 
 ---
 
@@ -1203,51 +1256,7 @@ let me show you something cool...
 
 ---
 
-## Code Splitting
-
----
-
-<NoCodeSplit />
-
----
-
-<SimpleCodeSplit />
-
----
-
-<EagerRequests />
-
----
-
-<CodeSurfer>
-
-```jsx 22:26 file="./codeblocks/Analytics1.tsx"
-```
-
-```diff 23:25
-```
-
-```jsx file="./codeblocks/Analytics2.tsx"
-```
-
-```jsx file="./codeblocks/Analytics3.tsx"
-```
-
-</CodeSurfer>
-
----
-
 ## Code Navigability
-
----
-
-## State Management vs Side-Effect Orchestration:
-
-<Appear>
-
-## A false dilemma
-
-</Appear>
 
 ---
 
@@ -1261,8 +1270,6 @@ Server Side Rendering
 
 Documentation (for now)
 
-API stability
-
 </Appear>
 
 ---
@@ -1275,14 +1282,10 @@ Victor Oliva
 
 Adaptive (Bhavesh, Loic, Pierre, Matt...)
 
-RxJS core team
-
-Nicholas Jamieson and Ben Lesh
+RxJS core team (Nicholas Jamieson and Ben Lesh)
 
 Kos Palchyk (Recks, ThinkRx.io, etc)
 
 Daishi Kato (Jotai, Valtio, React Tracked...)
-
-You!
 
 </Appear>
