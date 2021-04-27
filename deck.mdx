@@ -662,10 +662,10 @@ Every time that we have to lift the state we have to:
 
 - start worring about avoiding re-renders
 - also, we don't have an easy way to define derive state, so we endup putting
-business logic inside the components
+  business logic inside the components
 - Even after having applied all the recomended performance optimizations, we
-still see components that are being recomputed for state changes that don't
-affect them.
+  still see components that are being recomputed for state changes that don't
+  affect them.
 
 But why?
 
@@ -677,6 +677,21 @@ What does that even mean, right?
 Well, this is a representation of our tree view, this is how our components
 are being composed.
 
+</Notes>
+
+## View tree vs State Graph
+
+<Appear>
+  <Image
+    src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/components.png"
+    width="1000px"
+    height="500px"
+  />
+</Appear>
+
+---
+
+<Notes>
 However, if we had to represent a diagram with the relations of our state,
 that diagram would look more or less like this:
 
@@ -686,6 +701,19 @@ model the relations of our state (pause), which is not a tree.
 And that puts us in this awkard position, where every time that we need to
 derive state from another piece of state, we endup creating coupling between them.
 
+</Notes>
+
+## View tree vs State Graph
+
+<Image
+  src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/state.png"
+  width="1000px"
+  height="500px"
+/>
+
+---
+
+<Notes>
 However, if every time that we define a dynamic value we make that definition
 based on how it relates to other dynamic values, then we will be building a
 reactive and loosely coupled solution. Because our entities are only aware of
@@ -705,6 +733,18 @@ the state-entities inside our React components.
 </Notes>
 
 ## View tree vs State Graph
+
+<Image
+  src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/components.png"
+  width="1000px"
+  height="500px"
+/>
+
+<Image
+  src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/state.png"
+  width="1000px"
+  height="500px"
+/>
 
 ---
 
