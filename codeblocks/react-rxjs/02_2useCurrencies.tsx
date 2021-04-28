@@ -10,7 +10,7 @@ import {
   Table,
 } from "./utils"
 
-const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
+const [useCurrencies, currencies$] = bind(EMPTY, Object.keys(initialCurrencyRates))
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
   const rate = initialCurrencyRates[currency]

@@ -14,8 +14,8 @@ import {
 const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
 
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
-const [useCurrencyRate] = bind(
-  rateChange$,
+const [useCurrencyRate, currencyRate$] = bind(
+  (currency: string) => rateChange$(currency),
   (currency) => initialCurrencyRates[currency],
 )
 

@@ -44,7 +44,7 @@ For those of you who have experience with React: have you ever wished that
 you could use RxJS Observables for managing the domain state of your
 applications?
 
-Not as a means to aid a deficient and incomplete state management library, like
+Not as a means to aid a deficient state management library, like
 we often do, but as a fully featured tool for managing our domain state?
 
 Well I certainly did, and in this presentation I will be explaining why
@@ -53,8 +53,9 @@ management library.
 
 In this talk I will be highlighting 3 benefits of using React-RxJS:
 
-- The first one is that it allows us to derive our state using streams without
-having to worry about triggering undesired React re-renders.
+- The first one is that it allows us to derive our state using streams, which as
+we will see, it's something that has a lot of benefits: one of them is that
+we won't have to worry about triggering undesired React re-renders.
 
 - The second one is that these bindings fully leaverage React Suspense, both
 for data-loading and for code-splitting... and how thanks to this can greatly
@@ -100,6 +101,27 @@ Borrowed from Michel Westrate's talk:
 
 https://www.youtube.com/watch?v=ZHxFrbK3VB0
 
+<Notes>
+
+Ok, let's get started! First we will build a demo Application.
+The purpose of which is to highlight why
+-for certain applications- using React as a state management library is less
+than ideal, and why for those kinds of applications React-RxJS can be
+a powerful tool for improving the maintaintanability and the performance of 
+our React applications.
+
+I've borrowed the "demo app" from Michel Westrate's
+talk: "Mobx, or going from mutable to immutable to Reactive state management.".
+In his talk Michel solves the same problem using different implemementations
+and then he compares the tradeoffs of each solution.
+
+We will do something similar, we
+will first solve the problem using React -and our implementation is going to
+be quite different from his implementations- and then we will solve the same 
+problem using React-RxJS.
+
+</Notes>
+
 ---
 
 ## Orders and Exchange rates: our demo application
@@ -114,16 +136,13 @@ This application has:
 The user can edit the price and the currency of each order, and when
 they do the base-currency-price gets updated accordingly.
 
-The only tricky thing about this, is that the base-currency-price field
+The only tricky thing about this, is that the base-currency-price
 depends on the currency-rate of the selected currency.
 
 Meaning that the values of the exchange rates affect the values of the orders.
 
 The demo App an Add button, that it's going to add a random order when we press
 it and a field with the sum of the base-currency-prices.
-
-We will first build it using just React,
-and then we will solve the same problem using React-RxJS.
 
 </Notes>
 
@@ -684,8 +703,7 @@ are being composed.
 <Appear>
   <Image
     src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/components.png"
-    width="1000px"
-    height="500px"
+    size="contain"
   />
 </Appear>
 
@@ -707,8 +725,7 @@ derive state from another piece of state, we endup creating coupling between the
 
 <Image
   src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/state.png"
-  width="1000px"
-  height="500px"
+  size="contain"
 />
 
 ---
@@ -732,52 +749,37 @@ the state-entities inside our React components.
 
 </Notes>
 
-## View tree vs State Graph
-
 <Image
   src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/combined01.png"
-  width="740px"
-  height="740px"
+  size="contain"
 />
 
 ---
-
-## View tree vs State Graph
 
 <Image
   src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/combined02.png"
-  width="740px"
-  height="740px"
+  size="contain"
 />
 
 ---
-
-## View tree vs State Graph
 
 <Image
   src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/combined03.png"
-  width="740px"
-  height="740px"
+  size="contain"
 />
 
 ---
-
-## View tree vs State Graph
 
 <Image
   src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/combined04.png"
-  width="740px"
-  height="740px"
+  size="contain"
 />
 
 ---
 
-## View tree vs State Graph
-
 <Image
   src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/combined05.png"
-  width="740px"
-  height="740px"
+  size="contain"
 />
 
 ---
@@ -1263,24 +1265,6 @@ ago when we decided to fully rearchitect it by leaverage React-RxJS.
 
 ---
 
-<CodeSurfer>
-
-```jsx 22:26 file="./codeblocks/Analytics1.tsx"
-```
-
-```diff 23:25
-```
-
-```jsx file="./codeblocks/Analytics2.tsx"
-```
-
-```jsx file="./codeblocks/Analytics3.tsx"
-```
-
-</CodeSurfer>
-
----
-
 ## Using React Suspense for data loading
 
 ---
@@ -1324,6 +1308,15 @@ ago when we decided to fully rearchitect it by leaverage React-RxJS.
 ```
 
 ```jsx 22:26 file="./codeblocks/Analytics1.tsx"
+```
+
+```diff 23:25
+```
+
+```jsx file="./codeblocks/Analytics2.tsx"
+```
+
+```jsx file="./codeblocks/Analytics3.tsx"
 ```
 
 </NotesCodeSurfer>
