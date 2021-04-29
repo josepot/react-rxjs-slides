@@ -151,18 +151,18 @@ it and a field with the sum of the base-currency-prices.
 <NotesCodeSurfer>
 
 ```notes checkout:react-local-state/1
-Before we start coding, let's get familiar with
-the starting point. Our awesome product designer
-has set this up for us, it's a bunch of presentation
-components without any state, and our work is to
-bring this to life.
+Before we start coding, let's get familiar
+with the starting point. Our awesome product
+designer has set this up for us, it's a
+bunch of presentation components without any
+state, and our work is to bring this to life.
 
 - The Orders component
 - And the Currencies
 
-and then, here in the middle: we have a button
-for adding orders and these OrderTotal component
-which renders the total sum of the
+and then, here in the middle: we have a
+button for adding orders and these OrderTotal
+component which renders the total sum of the
 base-currency-price of the orders.
 
 Perfect! Now, let's have a quick look at
@@ -192,8 +192,9 @@ file.
 The Orderline component: very straightforward.
 It gets an Order through props and it renders
 its properties.
-Its worth noting, though, that the base-cc-price,
-which is a computed field, is currenctly hardcoded.
+Its worth noting, though, that
+the base-cc-price, which is a computed field,
+is currenctly hardcoded.
 ```
 
 ```diff 55:68
@@ -693,8 +694,10 @@ state graph.
 
 What does that even mean, right?
 
-Well, this is a representation of our tree view, this is how our components
-are being composed.
+Well, if I had to draw a diagram that represents how our components are being
+composed, that diagram would look more or less like this:
+
+Let's call this the "view tree. Here at the top 
 
 </Notes>
 
@@ -1203,10 +1206,13 @@ Here let's use the `useTotal` hook.
 ```
 
 ```notes
-Perhaps at this point you are thinking:
-"Sure, but that is a contrived example, does this actually scale in a real App"?
+Now, at this point, perhaps you're
+thinking sure, but this is a contrived
+example... does this actually scale
+in a real application?
 
-I'm glad you asked, let me present you... Reactive Trader
+Well, I'm glad you asked! Let me
+present to you Reactive Trader!
 ```
 
 ```diff 19:64
@@ -1218,9 +1224,13 @@ I'm glad you asked, let me present you... Reactive Trader
 
 <Notes>
 
-Reactive Trader a fully open-source showcase trading platform, that's we've built at
-Adaptive. You can get the code and/or contribute if you want, it's available
-on github and the url of the repo is...
+The super cool open source showcase trading platform that we have built at
+Adaptive.
+
+This is Reactive Trader!
+
+The code of it is fully available on Github under the AdaptiveConsulting
+organization and the name of the repo is ReactiveTraderCloud.
 
 Reactive-Trader is a key project for us, for 2 different reasons:
 
@@ -1235,9 +1245,47 @@ are capable of.
 is a tool that allows us to experiment better ways of doing things and share that
 knowledge, not only inside the company, but also externaly.
 
+So this is RT, now I'm not going to explain everything that happens here, b/c
+it's quite complex, but you get the idea, right? There are lots of different
+moving pieces... prices that are being received from a push based API based
+on web sockets, etc.
+
 However, Reactive Trader is a project that got started 6 years ago and it has
 gone through different refactors... The latest one started a few monnths
-ago when we decided to fully rearchitect it by leaverage React-RxJS.
+ago when we decided to fully rearchitect it by leaveraging React-RxJS.
+
+Why did we chose React-RxJS for the latest refactor?
+
+Notice that RT is consuming a websocket API that mostly only sends deltas and
+we need to combine that information with the user interactions, meaning that
+we have to keep track of a lot of derived state... and as we saw before
+React-RxJS is a really good tool for dealing with derived state, also our API
+endpoints are observables, so it makes sense for us to keep deriving those
+observables to manage the state of the application.
+
+So, in the previous section we saw how thanks to React-RxJS we can improve the
+performance of our React applications by not over-stressing react with
+unnecessary re-renders... However, when it comes to web-performance, the most
+important metrics are those ones that have to do with loading times and probably
+Lighthouse is the best tool for analying those metrics.
+
+So, will React-RxJS help us at improving the loading times of our React Apps?
+
+Well, in the case of RT we have been able to improve its lighthouse score from
+a score of 43 to a score of 96.
+
+What it's most impressive, in my opinion, is how we've been able to improve the
+unused amount of javascript that was penalizing us with two point 26 seconds
+on loading times.
+
+It would be unfair to say that this is only thanks to react-rxjs, b/c there are
+other things that we've done better, this time... But one thing that react-rxjs
+has done for us is that it has allowed us to optimally code-split our App,
+without having to make any compromises on the way that we coded the App.
+
+But before I show you how we did that, allow me to first explain how
+code-splitting works, for those of you how are not very familiar with this
+concept:
 
 </Notes>
 
@@ -1253,13 +1301,105 @@ ago when we decided to fully rearchitect it by leaverage React-RxJS.
 
 ---
 
+<Notes>
+This is what happens when we try to load a web page: the browser will make
+a GET request and the server returns an HTML file.
+
+In this example, it takes 130ms from the moment that the client makes the
+request, until the moment that it receives the first bytes of data, then it
+takes about 5ms to receive the HTML content and about 10 ms to parse the HTML
+data... At that point the browser will start a series of requests with the
+resources that the HTML file has declared: css files, fonts, images, etc.
+
+One of those requests is going to be the main js asset of our web-application.
+
+So, if we don't do any sort of code-splitting our main js asset will take
+about 1 second to be fully downloaded and uncompressed, but once it has been
+downloaded and uncompressed, it will still take another 1.4 seconds to be
+fully parsed, compiled and evaluated.
+
+But something that's really important is the fact that all this
+parsing/compiling and evaluation must happen on the main process, meaning that
+this blue block represetns a blocking task.
+
+Side-note here: that's why we should always take into account the parsing size
+of our JS assets, rather than looking at the compressed sizes.
+
+Once the main JS asset has been evaluated, then the browser will start
+requesting the data that's being used inside our 3 main components that we have
+seen before.
+
+So if we don't do any sort of code-splitting, then will be able to have a fully
+functional application after all these requests have finished.
+
+The problem here is that if we don't do any sort of code-splitting we will
+be shipping all this unused code that's not necessary for the initial render.
+Which is unfortunate, because that unused code is delaying the API requests
+and taking a significant amount of blocking time when the app gets initially
+loaded.
+
+So, it would be ideal if we moved all that code that's unsued on the first
+render outside of the main chunk, right?
+
+</Notes>
+
 <NoCodeSplit />
 
 ---
 
+<Notes>
+So an improvement, and this is what most ppl do, is to code-split the JS assets
+like this: we create different chunks for the different parts of the application
+that depend on data that will arrive at a later stage, and whenever that chunk
+gets downloaded/parsed/compiled and evaluated then we start the request for the
+data that the chunk needs.
+
+Now, the issue with this is that if we want to have all the logic for the
+LiveRates self-contained on its chunk, then it's difficult to start the request
+for the data that the chunk needs before the chunk gets loaded. However, this
+creates this waterfall effect: ideally we would like to start the data requests
+as soon as the main chunk gets parsed...
+
+And BTW, this is assuming that we have been able to actually move all the logic
+of sections on their corresponding chunk, and I'm saying this because what it
+tends to happen when we use state-management libraries that are based on central
+stores, or when we use react as a state management library but we lift too much
+state is this:
+
+That the main chunk is a lot bigger because a lot of the logic that is related
+with each of those components got pulled into the main assed: maybe because
+we are relying on a root reducer, or on a root saga, or on a root context, etc.
+
+And even then it's difficult to get those requests started before the chunk
+gets loaded.
+
+So, this is a lot better, right? If we use a state management library that
+allows us to encapsulate all the logic for each one of these components on
+their corresponding chunk.
+
+But still, we are facing this whatefall problem, because ideally we would like
+to code-split our app like this:
+</Notes>
+
 <SimpleCodeSplit />
 
 ---
+
+<Notes>
+This is what we want to do. We want to make sure that we start the data-requests
+as soon as the main chunk loads, in parallel with the requests for those JS
+assets.
+
+And in a super-ideal world, we would like to be able to do this:
+
+preload the async chunks by referencing them in the HTML file with the
+"modulepreload" link, so that we start all the requests as soon as possible.
+
+This is the kind of code-splitting that we have been able to implement thanks
+to the fact that we are using react-rxjs.
+
+So let's see how we did that.
+</Notes>
 
 <EagerRequests />
 
