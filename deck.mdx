@@ -689,21 +689,56 @@ Every time that we have to lift the state we have to:
 
 But why?
 
-I think that this happens because we are conflating the tree view with the
+I think that this happens because we are conflating the view tree with the
 state graph.
 
 What does that even mean, right?
 
-Well, if I had to draw a diagram that represents how our components are being
+Well, if we had to draw a diagram that represents how our components are being
 composed, that diagram would look more or less like this:
 
-Let's call this the "view tree. Here at the top we have...
+Let's call this the "view tree". Here at the top we have...
 
-However, if I have to draw a diagram that represents how our state is being
-composed, then that diagram would look more or less like this:
+However, if we had to draw a diagram that represents how we would like to
+compose the state, then that diagram would look more or less like this:
 </Notes>
 
 ## View tree vs State Graph
+
+<Notes>
+Basically, we are defining each piece of state, like if we were defining the
+cells of a spreadsheet:
+
+For instnace, the orders total depends on the base ccy price of each order,
+any time that one of the ccy prices updates the orders total will be recomputed.
+And if they don't update, then it won't...
+
+Similarly, the base-ccy-price of each order depends on the order the price that
+the user has set for that order, and the currency rate of the selected currency,
+so if the user selects the US Dollar, then it will depend on the currency rate
+of the US dollar, and if the user selects the CAD Dollar it will depend on the
+currency rate of the canadian dollar... And so on so forth...
+
+So, if every time that we define a piece of state we define it based on its
+dependencies, then we will be creating an loosely coupled solution, but not only
+that, we will also make sure that we only recompute the parts of the state that
+have to be recomputed.
+
+However, if we use React as our state management library, we won't be able to
+define our state like this, because react treats our state as a black box, it
+doesn't understand its hierarchy or its relations... What's even worse is that
+we will be using a tree for modeling graph, and that might be ok if the state
+graph of our app completely overlaps with the view-tree, but if it doesn't,
+then I don't think that we should be using React as our state management
+library.
+
+I would much rather to use React for modeling the view tree and then outiside of
+react use a state management library that allows us to define our state based on
+their dependencies... In other words: a reactive state managemnt library.
+
+Something more or less like this.
+
+</Notes>
 
 <Appear>
   <Image
@@ -1405,7 +1440,7 @@ So let's see how we did that.
 
 ---
 
-## Using React Suspense for data loading
+## Fully leveraging React Suspense
 
 ---
 
