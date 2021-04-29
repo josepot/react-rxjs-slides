@@ -3,7 +3,7 @@ import { createKeyedSignal, combineKeys } from "@react-rxjs/utils"
 import { combineLatest, concat, EMPTY } from "rxjs"
 import { map, switchMap } from "rxjs/operators"
 import {
-  initialCurrencyRates,
+  initialCcyRates,
   formatCurrency,
   NumberInput,
   formatPrice,
@@ -12,12 +12,12 @@ import {
   getBaseCurrencyPrice,
 } from "./utils"
 
-const [useCurrencies] = bind(EMPTY, Object.keys(initialCurrencyRates))
+const [useCurrencies] = bind(EMPTY, Object.keys(initialCcyRates))
 
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
 const [useCurrencyRate, currencyRate$] = bind(
   (currency: string) => rateChange$(currency),
-  (currency) => initialCurrencyRates[currency],
+  (currency) => initialCcyRates[currency],
 )
 
 const initialOrderIds = Object.keys(initialOrders)

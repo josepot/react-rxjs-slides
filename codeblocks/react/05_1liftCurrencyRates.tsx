@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react"
 import {
-  initialCurrencyRates,
+  initialCcyRates,
   formatCurrency,
   Order,
   NumberInput,
@@ -11,19 +11,19 @@ import {
 
 type SetState<T> = React.Dispatch<React.SetStateAction<T>>
 
-const initialCurrencies = Object.keys(initialCurrencyRates)
+const initialCurrencies = Object.keys(initialCcyRates)
 const currenciesContext = createContext(initialCurrencies)
 const useCurrencies = () => useContext(currenciesContext)
 const { Provider: CurrenciesContextProvider } = currenciesContext
 
 const currencyRatesContext = createContext<
   [Record<string, number>, SetState<Record<string, number>>]
->([initialCurrencyRates, () => {}])
+>([initialCcyRates, () => {}])
 const useCurrencyRates = () => useContext(currencyRatesContext)
 const { Provider: CurrencyRatesContextProvider } = currencyRatesContext
 
 const CurrenciesProvider: React.FC = ({ children }) => {
-  const currencyRates = useState(initialCurrencyRates)
+  const currencyRates = useState(initialCcyRates)
   return (
     <CurrenciesContextProvider value={initialCurrencies}>
       <CurrencyRatesContextProvider value={currencyRates}>
@@ -34,7 +34,7 @@ const CurrenciesProvider: React.FC = ({ children }) => {
 }
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
-  const [rate, setRate] = useState(initialCurrencyRates[currency])
+  const [rate, setRate] = useState(initialCcyRates[currency])
   return (
     <tr key={currency}>
       <td>{formatCurrency(currency)}</td>

@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react"
 import {
-  initialCurrencyRates,
+  initialCcyRates,
   formatCurrency,
   Order,
   NumberInput,
@@ -9,7 +9,7 @@ import {
   Table,
 } from "./utils"
 
-const initialCurrencies = Object.keys(initialCurrencyRates)
+const initialCurrencies = Object.keys(initialCcyRates)
 const currenciesContext = createContext(initialCurrencies)
 const useCurrencies = () => useContext(currenciesContext)
 const { Provider: CurrenciesContextProvider } = currenciesContext
@@ -23,7 +23,7 @@ const CurrenciesProvider: React.FC = ({ children }) => {
 }
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
-  const rate = initialCurrencyRates[currency]
+  const rate = initialCcyRates[currency]
   return (
     <tr key={currency}>
       <td>{formatCurrency(currency)}</td>

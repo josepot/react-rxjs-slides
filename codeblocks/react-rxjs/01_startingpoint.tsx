@@ -1,5 +1,5 @@
 import {
-  initialCurrencyRates,
+  initialCcyRates,
   formatCurrency,
   Order,
   NumberInput,
@@ -9,7 +9,7 @@ import {
 } from "./utils"
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
-  const rate = initialCurrencyRates[currency]
+  const rate = initialCcyRates[currency]
   return (
     <tr key={currency}>
       <td>{formatCurrency(currency)}</td>
@@ -21,7 +21,7 @@ const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
 }
 
 const Currencies = () => {
-  const currencies = Object.keys(initialCurrencyRates)
+  const currencies = Object.keys(initialCcyRates)
   return (
     <Table columns={["Currency", "Exchange rate"]}>
       {currencies.map((currency) => (
@@ -35,7 +35,7 @@ const CurrencySelector: React.FC<{
   value: string
   onChange: (next: string) => void
 }> = ({ value, onChange }) => {
-  const currencies = Object.keys(initialCurrencyRates)
+  const currencies = Object.keys(initialCcyRates)
   return (
     <select
       onChange={(e) => {

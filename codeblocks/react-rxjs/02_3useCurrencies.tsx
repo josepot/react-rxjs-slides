@@ -1,7 +1,7 @@
 import { bind } from "@react-rxjs/core"
 import { EMPTY } from "rxjs"
 import {
-  initialCurrencyRates,
+  initialCcyRates,
   formatCurrency,
   Order,
   NumberInput,
@@ -10,10 +10,10 @@ import {
   Table,
 } from "./utils"
 
-const [useCurrencies, currencies$] = bind(EMPTY, Object.keys(initialCurrencyRates))
+const [useCurrencies, currencies$] = bind(EMPTY, Object.keys(initialCcyRates))
 
 const CurrencyRate: React.FC<{ currency: string }> = ({ currency }) => {
-  const rate = initialCurrencyRates[currency]
+  const rate = initialCcyRates[currency]
   return (
     <tr key={currency}>
       <td>{formatCurrency(currency)}</td>

@@ -32,7 +32,7 @@ import {
   withLatestFrom,
 } from "rxjs/operators"
 import {
-  initialCurrencyRates,
+  initialCcyRates,
   formatCurrency,
   NumberInput,
   formatPrice,
@@ -46,7 +46,7 @@ import {
 
 const [useCurrencies, currencies$] = bind(
   EMPTY,
-  Object.keys(initialCurrencyRates),
+  Object.keys(initialCcyRates),
 )
 
 const [rateChange$, onRateChange] = createKeyedSignal<string, number>()
@@ -115,7 +115,7 @@ export const [useCurrencyRate, currencyRate$] = bind(
   },
   (currency) => ({
     state: CurrencyRateState.ACCEPTED,
-    value: initialCurrencyRates[currency],
+    value: initialCcyRates[currency],
   }),
 )
 
