@@ -48,7 +48,7 @@ Not as a means to aid a deficient state management library, like
 we often do, but as a fully featured tool for managing our domain state?
 
 Well I certainly did, and in this presentation I will be explaining why
-thanks to React-RxJs we will be able to use RxJS as an amazingly powerul state
+thanks to React-RxJs we will be able to use RxJS as a very powerul state
 management library.
 
 In this talk I will be highlighting 3 benefits of using React-RxJS:
@@ -705,6 +705,16 @@ compose the state, then that diagram would look more or less like this:
 
 ## View tree vs State Graph
 
+
+<Appear>
+  <Image
+    src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/components.png"
+    size="contain"
+  />
+</Appear>
+
+---
+
 <Notes>
 Basically, we are defining each piece of state, like if we were defining the
 cells of a spreadsheet:
@@ -737,25 +747,6 @@ react use a state management library that allows us to define our state based on
 their dependencies... In other words: a reactive state managemnt library.
 
 Something more or less like this.
-
-</Notes>
-
-<Appear>
-  <Image
-    src="https://raw.githubusercontent.com/josepot/react-rxjs-slides/master/images/components.png"
-    size="contain"
-  />
-</Appear>
-
----
-
-<Notes>
-
-So, by using react as a state management library we are trying to use a tree to
-model the relations of our state (pause), which is not a tree.
-
-And that puts us in this awkard position, where every time that we need to
-derive state from another piece of state, we endup creating coupling between them.
 
 </Notes>
 
@@ -1270,11 +1261,9 @@ organization and the name of the repo is ReactiveTraderCloud.
 Reactive-Trader is a key project for us, for 2 different reasons:
 
 - The first one is that most of our clients are financial institutions that don't
-want for their competitors to know that we are doing work for them, but most
-importantly they don't want for their competitors to know the kind of work that
-we are doing for them. That's why it's important for us to have
-showcase applications, so that we can demo to our potential clients what we
-are capable of.
+want for their competitors to know that we are doing work for them.
+That's why it's important for us to have showcase applications, so that we can
+demo to our potential clients what we are capable of.
 
 - The second reason is that at Adaptive we foster innovation and Reactive Trader
 is a tool that allows us to experiment better ways of doing things and share that
@@ -1285,18 +1274,9 @@ it's quite complex, but you get the idea, right? There are lots of different
 moving pieces... prices that are being received from a push based API based
 on web sockets, etc.
 
-However, Reactive Trader is a project that got started 6 years ago and it has
+Now, Reactive Trader is a project that got started many years ago and it has
 gone through different refactors... The latest one started a few monnths
 ago when we decided to fully rearchitect it by leaveraging React-RxJS.
-
-Why did we chose React-RxJS for the latest refactor?
-
-Notice that RT is consuming a websocket API that mostly only sends deltas and
-we need to combine that information with the user interactions, meaning that
-we have to keep track of a lot of derived state... and as we saw before
-React-RxJS is a really good tool for dealing with derived state, also our API
-endpoints are observables, so it makes sense for us to keep deriving those
-observables to manage the state of the application.
 
 So, in the previous section we saw how thanks to React-RxJS we can improve the
 performance of our React applications by not over-stressing react with
